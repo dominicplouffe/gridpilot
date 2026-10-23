@@ -287,3 +287,18 @@ fn hotkeys_can_be_paused_for_recording() {
     e.dispatch("hotkeys on").unwrap();
     assert_eq!(p.state().hotkeys.len(), all);
 }
+
+#[test]
+fn capslock_presses_the_mod_modifiers() {
+    use gridpilot_core::keys::Modifiers;
+    let (mut e, p) = engine_with(1, Config::default());
+    assert_eq!(p.state().capslock, Some(Modifiers::CTRL | Modifiers::ALT | Modifiers::CMD));
+    let mut c = Config::default();
+    c.modifiers.insert("mod".into(), "ctrl+alt".into());
+    e.apply_config(c).unwrap();
+    assert_eq!(p.state().capslock, Some(Modifiers::CTRL | Modifiers::ALT));
+    let mut c = Config::default();
+    c.general.capslock_mod = false;
+    e.apply_config(c).unwrap();
+    assert_eq!(p.state().capslock, None);
+}

@@ -155,6 +155,7 @@ impl Engine {
         self.sync_displays()?;
         let chords: Vec<Chord> = self.keymap.keys().copied().collect();
         self.platform.register_hotkeys(&chords)?;
+        self.apply_capslock();
         self.refresh()?;
         let theme = self.theme.clone();
         self.platform.present(UiRequest::ThemeChanged(theme));
@@ -182,6 +183,23 @@ impl Engine {
     /// Bindings as features declared them, before config overrides.
     pub fn default_bindings(&self) -> &[DefaultBinding] {
         &self.defaults
+    }
+
+    /// The modifiers Caps Lock should press: those of the `mod` alias.
+    pub fn capslock_modifiers(&self) -> Option<crate::keys::Modifiers> {
+        if !self.config.general.capslock_mod {
+            return None;
+        }
+        Chord::parse("mod+a", &self.config.modifiers).ok().map(|c| c.mods).filter(|m| !m.is_empty())
+    }
+
+    fn apply_capslock(&mut self) {
+        let mods = self.capslock_modifiers();
+        if let Err(e) = self.platform.set_capslock_modifiers(mods) {
+            // Leave Caps Lock alone; mod still works by holding its keys.
+            let _ = self.platform.set_capslock_modifiers(None);
+            self.warn(format!("Caps Lock can't act as mod: {e}"));
+        }
     }
 
     /// Turn global hotkeys off (e.g. while the settings page records a
@@ -747,6 +765,7 @@ impl Engine {
         self.install_features();
         let chords: Vec<Chord> = self.keymap.keys().copied().collect();
         self.platform.register_hotkeys(&chords)?;
+        self.apply_capslock();
         let theme = self.theme.clone();
         self.platform.present(UiRequest::ThemeChanged(theme));
         self.applied.clear();

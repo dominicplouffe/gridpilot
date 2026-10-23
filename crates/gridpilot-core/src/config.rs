@@ -104,11 +104,15 @@ pub struct General {
     pub poll_interval_ms: u64,
     /// Move the mouse pointer to the centre of a window focused by keyboard.
     pub mouse_follows_focus: bool,
+    /// Make Caps Lock act as the `mod` key, with no extra app (macOS).
+    /// A tap on its own does nothing; Caps Lock stops typing capitals while
+    /// GridPilot runs and is restored when it quits.
+    pub capslock_mod: bool,
 }
 
 impl Default for General {
     fn default() -> Self {
-        Self { default_bindings: true, poll_interval_ms: 250, mouse_follows_focus: false }
+        Self { default_bindings: true, poll_interval_ms: 250, mouse_follows_focus: false, capslock_mod: true }
     }
 }
 

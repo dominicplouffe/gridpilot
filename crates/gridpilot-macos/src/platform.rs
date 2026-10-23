@@ -3,7 +3,7 @@
 use crate::ax::AxElement;
 use crate::ffi::{CGPoint, CGWarpMouseCursorPosition};
 use gridpilot_core::geometry::{Point, Rect};
-use gridpilot_core::keys::Chord;
+use gridpilot_core::keys::{Chord, Modifiers};
 use gridpilot_core::platform::{DisplayId, DisplayInfo, Platform, PlatformResult, UiRequest, WindowId, WindowInfo};
 use objc2::MainThreadMarker;
 use objc2_app_kit::{NSApplicationActivationPolicy, NSRunningApplication, NSScreen, NSWorkspace};
@@ -185,6 +185,8 @@ impl Platform for MacPlatform {
     }
 
     fn register_hotkeys(&mut self, chords: &[Chord]) -> PlatformResult<()> {
+        // No hotkeys means "paused" (the settings page is recording).
+        crate::capslock::set_passthrough(chords.is_empty());
         let failed = crate::hotkeys::register(chords);
         if failed.is_empty() {
             Ok(())
@@ -192,6 +194,10 @@ impl Platform for MacPlatform {
             let names: Vec<String> = failed.iter().map(|c| c.to_string()).collect();
             Err(format!("could not register (taken by another app?): {}", names.join(", ")))
         }
+    }
+
+    fn set_capslock_modifiers(&mut self, mods: Option<Modifiers>) -> PlatformResult<()> {
+        crate::capslock::configure(mods)
     }
 
     fn present(&mut self, request: UiRequest) {

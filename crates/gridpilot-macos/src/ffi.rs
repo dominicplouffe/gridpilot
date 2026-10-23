@@ -103,6 +103,74 @@ extern "C" {
     pub fn CGWarpMouseCursorPosition(p: CGPoint) -> i32;
 }
 
+// ----- Quartz event taps -------------------------------------------------
+
+pub type CFMachPortRef = *mut c_void;
+pub type CFRunLoopRef = *mut c_void;
+pub type CFRunLoopSourceRef = *mut c_void;
+pub type CGEventRef = *mut c_void;
+pub type CGEventTapProxy = *mut c_void;
+pub type CGEventTapCallBack = extern "C" fn(CGEventTapProxy, u32, CGEventRef, *mut c_void) -> CGEventRef;
+
+pub const kCGSessionEventTap: u32 = 1;
+pub const kCGHeadInsertEventTap: u32 = 0;
+pub const kCGEventTapOptionDefault: u32 = 0;
+pub const kCGEventKeyDown: u32 = 10;
+pub const kCGEventKeyUp: u32 = 11;
+pub const kCGEventTapDisabledByTimeout: u32 = 0xFFFF_FFFE;
+pub const kCGEventTapDisabledByUserInput: u32 = 0xFFFF_FFFF;
+pub const kCGKeyboardEventKeycode: u32 = 9;
+pub const kCGEventFlagMaskShift: u64 = 0x0002_0000;
+pub const kCGEventFlagMaskControl: u64 = 0x0004_0000;
+pub const kCGEventFlagMaskAlternate: u64 = 0x0008_0000;
+pub const kCGEventFlagMaskCommand: u64 = 0x0010_0000;
+
+#[link(name = "ApplicationServices", kind = "framework")]
+extern "C" {
+    pub fn CGEventTapCreate(
+        tap: u32,
+        place: u32,
+        options: u32,
+        events_of_interest: u64,
+        callback: CGEventTapCallBack,
+        user_info: *mut c_void,
+    ) -> CFMachPortRef;
+    pub fn CGEventTapEnable(tap: CFMachPortRef, enable: bool);
+    pub fn CGEventGetIntegerValueField(event: CGEventRef, field: u32) -> i64;
+    pub fn CGEventGetFlags(event: CGEventRef) -> u64;
+    pub fn CGEventSetFlags(event: CGEventRef, flags: u64);
+}
+
+#[link(name = "CoreFoundation", kind = "framework")]
+extern "C" {
+    pub static kCFRunLoopCommonModes: CFStringRef;
+    pub fn CFMachPortCreateRunLoopSource(
+        alloc: CFAllocatorRef,
+        port: CFMachPortRef,
+        order: CFIndex,
+    ) -> CFRunLoopSourceRef;
+    pub fn CFMachPortInvalidate(port: CFMachPortRef);
+    pub fn CFRunLoopGetMain() -> CFRunLoopRef;
+    pub fn CFRunLoopAddSource(rl: CFRunLoopRef, source: CFRunLoopSourceRef, mode: CFStringRef);
+    pub fn CFRunLoopRemoveSource(rl: CFRunLoopRef, source: CFRunLoopSourceRef, mode: CFStringRef);
+}
+
+// ----- signals via libdispatch -------------------------------------------
+
+extern "C" {
+    pub static _dispatch_source_type_signal: c_void;
+    pub fn dispatch_source_create(
+        kind: *const c_void,
+        handle: usize,
+        mask: usize,
+        queue: *const dispatch_queue_s,
+    ) -> *mut c_void;
+    pub fn dispatch_source_set_event_handler_f(source: *mut c_void, handler: extern "C" fn(*mut c_void));
+    pub fn dispatch_resume(object: *mut c_void);
+    pub fn signal(sig: i32, handler: usize) -> usize;
+}
+pub const SIG_IGN: usize = 1;
+
 // ----- Carbon hot keys --------------------------------------------------
 
 pub type EventTargetRef = *mut c_void;

@@ -1,69 +1,62 @@
-# Setting up the Hyper key
+# Caps Lock as your `mod` key
 
-GridPilot's `mod` key, Omarchy's SUPER, is a **Hyper key**: Caps Lock
-remapped so that holding it presses **Control + Option + Command**. No app
-uses that combination, so GridPilot can take every `mod+…` key without
-stealing app or system shortcuts.
+GridPilot's `mod` key, Omarchy's SUPER, is **Caps Lock**, out of the box.
+Hold Caps Lock and press a key: Caps+F full screen, Caps+← focus left,
+Caps+Shift+← swap, Caps+3 workspace 3, Caps+K all keys.
 
-**Leave Shift out of the Hyper key.** GridPilot uses `mod+shift+…` as its
-second layer (`mod+←` focuses, `mod+shift+←` swaps). If your Hyper key
-already includes Shift, every key press would look like the Shift layer.
+There is nothing to install. While GridPilot runs:
 
-Pick one of these tools.
+- Caps Lock no longer types capitals, and a tap on its own does nothing.
+- Holding Caps Lock counts as holding **Control + Option + Command**
+  (whatever `mod` is set to), so ⌃⌥⌘ by hand works too, for example on an
+  external keyboard.
+- Any key you press while holding Caps Lock goes to GridPilot, never to
+  the app, even if it isn't bound to anything.
 
-## Hyperkey (free, simplest)
+When GridPilot quits (menu bar → Quit, Ctrl-C, or even a crash) Caps Lock
+goes back to normal.
 
-1. Install [Hyperkey](https://hyperkey.app).
-2. Choose Caps Lock as the Hyper key.
-3. Turn **off** the option to include Shift in the Hyper key.
-4. Optionally make a quick tap of Caps Lock send Escape.
+## How it works
 
-## Raycast
+macOS ships a tool called `hidutil` that can remap keys for the current
+login session. GridPilot uses it to turn Caps Lock into F18, a key no app
+uses, and watches for F18 with a keyboard event tap (the same permission
+system GridPilot already uses to move windows). Your other key remaps,
+including ones made in System Settings → Keyboard → Modifier Keys, are kept
+and restored.
 
-Settings → Advanced → **Hyper Key**: choose Caps Lock, and turn off the
-option to include Shift.
+## Turning it off
 
-## Karabiner-Elements
-
-Add this rule under *Complex Modifications* (paste it as a new rule, or put
-it in `~/.config/karabiner/assets/complex_modifications/gridpilot.json`
-wrapped in `{"title": "GridPilot", "rules": [ … ]}`):
-
-```json
-{
-  "description": "Caps Lock → Hyper for GridPilot (ctrl+opt+cmd), Escape when tapped",
-  "manipulators": [
-    {
-      "type": "basic",
-      "from": { "key_code": "caps_lock", "modifiers": { "optional": ["any"] } },
-      "to": [{ "key_code": "left_command", "modifiers": ["left_control", "left_option"] }],
-      "to_if_alone": [{ "key_code": "escape" }]
-    }
-  ]
-}
-```
-
-## Check it works
-
-Run `gridpilot run`, hold Caps Lock and press `K`: the key cheat sheet
-should open. `gridpilot keymap` prints every binding as GridPilot sees it,
-e.g. `ctrl+alt+cmd+left  Focus window left`.
-
-## No Hyper key
-
-Everything still works by pressing `ctrl+alt+cmd` by hand. To use a
-different modifier, change one line in `~/.config/gridpilot/gridpilot.toml`:
+In the settings page (`gridpilot settings` → General), untick **Caps Lock is
+the main modifier**, or in `~/.config/gridpilot/gridpilot.toml`:
 
 ```toml
-[modifiers]
-mod = "ctrl+alt"      # or "hyper", or any combination
+[general]
+capslock_mod = false
 ```
 
-Then run `gridpilot check` to catch bindings that clash with each other,
-and `gridpilot reload`.
+Then hold ⌃⌥⌘ (or whatever `mod` is) instead.
 
-If you'd rather keep Shift in your Hyper key, set
-`hyper = "ctrl+alt+shift+cmd"` and move the `mod+shift+…` actions (swap,
-move to workspace, …) to other keys in `[bindings]`. `gridpilot check`
-can't spot this case for you: to GridPilot `mod+x` and `mod+shift+x` are
-different keys, it's your keyboard that sends them both as one.
+## If Caps Lock is stuck
+
+If Caps Lock still does nothing after GridPilot stopped, run:
+
+```sh
+gridpilot capslock off
+```
+
+Logging out or restarting the Mac also resets it.
+
+## If macOS blocks the keyboard hook
+
+GridPilot prints `Caps Lock can't act as mod: macOS refused the keyboard
+hook` and leaves Caps Lock alone. Allow GridPilot, or the terminal you
+started it from, in System Settings → Privacy & Security → **Accessibility**
+and **Input Monitoring**, then restart GridPilot.
+
+## Advanced: using another remapper
+
+If you already use Hyperkey, Raycast's Hyper Key or Karabiner-Elements to
+turn Caps Lock into ⌃⌥⌘, set `capslock_mod = false` so the two don't fight
+over the key. Leave Shift out of that Hyper key: GridPilot uses Shift as its
+second layer (`mod+shift+←` swaps).

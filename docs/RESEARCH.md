@@ -146,7 +146,7 @@ bindings and helper scripts. The facts below come from the Omarchy source
 | Window events | `AXObserver` notifications per app, plus `NSWorkspace` app launch/quit notifications. | v0.1 polls (`general.poll_interval_ms`, default 250 ms); observers are on the roadmap. The engine already accepts events (`PlatformEvent`). |
 | Drawing overlays | Borderless, non-activating `NSPanel`s at status-window level. | Grid overlay, HUD, key cheat sheet. |
 | Coordinates | AppKit: origin bottom-left of the primary screen. AX/Quartz: top-left. | The core uses top-left everywhere; only the backend flips. |
-| Modifier keys | Cmd is owned by apps (`cmd+w`, `cmd+t` …) and Cmd+Shift by macOS and apps. There is no free "Super". | `mod` alias, default a Hyper key (Caps Lock → `ctrl+alt+cmd`), Shift as the second layer (see §5). |
+| Modifier keys | Cmd is owned by apps (`cmd+w`, `cmd+t` …) and Cmd+Shift by macOS and apps. There is no free "Super". | `mod` alias, default `ctrl+alt+cmd`, pressed by Caps Lock via built-in `hidutil` + an event tap; Shift as the second layer (see §5). |
 
 ### Comparable macOS tools
 
@@ -192,10 +192,11 @@ per workspace, built as a feature framework.
 
 macOS has no free Super key: Cmd belongs to apps, and Cmd+Shift is full of
 system and app shortcuts (text selection, screenshots, Save As, redo,
-tab switching). So GridPilot's `mod` defaults to a **Hyper key**: Caps Lock
-remapped to `ctrl+alt+cmd` (without Shift), which no app uses. Shift stays
-free as the second layer, exactly like Omarchy's `SUPER + SHIFT`. Setup:
-[HYPER.md](HYPER.md).
+tab switching). So GridPilot's `mod` is `ctrl+alt+cmd`, which no app uses,
+and **Caps Lock presses it for you**: GridPilot remaps Caps Lock with
+macOS's built-in `hidutil` and turns Caps+key into hotkeys with an event
+tap, with nothing to install. Shift stays free as the second layer, exactly
+like Omarchy's `SUPER + SHIFT`. Details: [HYPER.md](HYPER.md).
 
 With `mod` holding three modifiers only Shift is left to add, so Omarchy's
 third-layer keys (`SUPER + ALT`, `SUPER + CTRL`, `SUPER + SHIFT + ALT`) move
@@ -220,8 +221,8 @@ to other keys or stay commands without a default key:
 | resize "a little" / "a lot" | command: `resize width -25` / `-300` | |
 | `SUPER + SPACE` (launcher) | `mod + space` → **grid overlay** | macOS has Spotlight |
 
-No Hyper key? Press `ctrl+alt+cmd` by hand, or set `mod = "ctrl+alt"` in
-`[modifiers]`; every binding follows the alias.
+Without Caps Lock (`capslock_mod = false`) hold `ctrl+alt+cmd`, or set
+`mod = "ctrl+alt"` in `[modifiers]`; every binding follows the alias.
 
 The complete generated table is in [KEYS.md](KEYS.md).
 

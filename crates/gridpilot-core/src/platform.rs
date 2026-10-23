@@ -7,7 +7,7 @@
 
 use crate::geometry::{Point, Rect};
 use crate::grid::{GridSession, Margins};
-use crate::keys::Chord;
+use crate::keys::{Chord, Modifiers};
 use crate::theme::Theme;
 use serde::{Deserialize, Serialize};
 use std::fmt;
@@ -141,6 +141,14 @@ pub trait Platform {
 
     /// Replace the set of global hotkeys.
     fn register_hotkeys(&mut self, chords: &[Chord]) -> PlatformResult<()>;
+
+    /// Make Caps Lock press these modifiers (`Some`), or restore it (`None`).
+    fn set_capslock_modifiers(&mut self, mods: Option<Modifiers>) -> PlatformResult<()> {
+        match mods {
+            Some(_) => Err("Caps Lock as a modifier is not supported by this backend".into()),
+            None => Ok(()),
+        }
+    }
 
     fn present(&mut self, request: UiRequest) {
         let _ = request;

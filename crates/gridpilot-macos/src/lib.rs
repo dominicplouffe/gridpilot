@@ -6,21 +6,36 @@
 //! * [`hotkeys`]: global shortcuts through Carbon's `RegisterEventHotKey`,
 //!   which needs no Input Monitoring permission.
 //! * [`overlay`], [`hud`], [`statusbar`]: AppKit UI drawn from engine state.
+//! * [`capslock`]: Caps Lock as the `mod` key, using macOS's own `hidutil`.
 //! * [`app`]: the main-thread run loop that owns the engine.
 //!
-//! On other targets this crate is empty so the workspace still builds.
+//! On other targets only [`hidmap`] is built, so the workspace still builds.
 
-#![cfg(target_os = "macos")]
+// Pure helpers, built and tested on every OS.
+pub mod hidmap;
 
+#[cfg(target_os = "macos")]
 pub mod app;
+#[cfg(target_os = "macos")]
 pub mod ax;
+#[cfg(target_os = "macos")]
+pub mod capslock;
+#[cfg(target_os = "macos")]
 mod ffi;
+#[cfg(target_os = "macos")]
 pub mod hotkeys;
+#[cfg(target_os = "macos")]
 pub mod hud;
+#[cfg(target_os = "macos")]
 pub mod keycodes;
+#[cfg(target_os = "macos")]
 pub mod overlay;
+#[cfg(target_os = "macos")]
 pub mod platform;
+#[cfg(target_os = "macos")]
 pub mod statusbar;
 
+#[cfg(target_os = "macos")]
 pub use app::{run, MainThreadPoster};
+#[cfg(target_os = "macos")]
 pub use platform::MacPlatform;

@@ -2,7 +2,7 @@
 //! command. It records every call so tests can assert on them.
 
 use crate::geometry::Rect;
-use crate::keys::Chord;
+use crate::keys::{Chord, Modifiers};
 use crate::platform::{DisplayId, DisplayInfo, Platform, PlatformResult, UiRequest, WindowId, WindowInfo};
 use std::cell::RefCell;
 use std::collections::BTreeMap;
@@ -23,6 +23,8 @@ pub struct MockState {
     pub set_frame_calls: usize,
     /// Windows whose `set_frame` fails, like a fixed-size macOS window.
     pub unmovable: Vec<WindowId>,
+    /// What Caps Lock was last set to press.
+    pub capslock: Option<Modifiers>,
 }
 
 impl MockState {
@@ -133,6 +135,11 @@ impl Platform for MockPlatform {
 
     fn register_hotkeys(&mut self, chords: &[Chord]) -> PlatformResult<()> {
         self.0.borrow_mut().hotkeys = chords.to_vec();
+        Ok(())
+    }
+
+    fn set_capslock_modifiers(&mut self, mods: Option<Modifiers>) -> PlatformResult<()> {
+        self.0.borrow_mut().capslock = mods;
         Ok(())
     }
 

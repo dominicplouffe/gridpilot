@@ -255,7 +255,7 @@ function chordHtml(spec) {
     `<kbd>${esc(KEY_LABEL[key] || key.toUpperCase())}</kbd>`;
 }
 function aliasLabel(name) {
-  if (name === "mod") return cfg.modifiers.mod === "hyper" ? "Hyper" : "mod";
+  if (name === "mod") return cfg.general.capslock_mod ? "Caps" : cfg.modifiers.mod === "hyper" ? "Hyper" : "mod";
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 function eventKey(e) {
@@ -373,8 +373,11 @@ function keysTab() {
   const offFeatures = new Set(cfg.features.disabled);
   const q = filter.toLowerCase();
   const rows = defaultRows().filter((d) => !q || [d.description, d.command, d.feature, d.chord].join(" ").toLowerCase().includes(q));
-  let html = `<h1>Keys</h1><p class="lede">Click a shortcut and press the keys you want. ${cfg.modifiers.mod === "hyper"
-    ? `<kbd class="alias">Hyper</kbd> is Caps Lock remapped to ⌃⌥⌘ (see <a href="https://github.com/dominicplouffe/gridpilot/blob/main/docs/HYPER.md" target="_blank" rel="noopener">HYPER.md</a>).` : ""}
+  const modKeys = [...(aliasMods("mod") || [])];
+  const modSymbols = MODS.filter((m) => modKeys.includes(m)).map((m) => SYMBOL[m]).join("");
+  let html = `<h1>Keys</h1><p class="lede">Click a shortcut and press the keys you want. ${cfg.general.capslock_mod
+    ? `<kbd class="alias">Caps</kbd> is Caps Lock: hold it, then press the key. Holding ${modSymbols} works too.`
+    : `<kbd class="alias">${esc(aliasLabel("mod"))}</kbd> is ${modSymbols}.`}
     GridPilot pauses its own hotkeys while you record.</p>`;
   if (!cfg.general.default_bindings) html += `<div class="banner warn">Default bindings are off (General), so only your own bindings below are active.</div>`;
   html += `<div class="row" style="margin-bottom:12px"><input type="text" class="search" id="filter" placeholder="Filter actions…" value="${esc(filter)}" aria-label="Filter actions"></div>`;
@@ -545,9 +548,9 @@ function featuresTab() {
 
 function generalTab() {
   const mod = cfg.modifiers.mod;
-  const presets = [["hyper", "Hyper key (Caps Lock → ⌃⌥⌘)"], ["ctrl+alt", "⌃⌥ Control + Option"], ["ctrl+alt+cmd", "⌃⌥⌘ by hand"], ["alt", "⌥ Option"]];
+  const presets = [["hyper", "⌃⌥⌘ Control + Option + Command"], ["ctrl+alt", "⌃⌥ Control + Option"], ["alt", "⌥ Option"]];
   let html = `<h1>General</h1><div class="card"><div class="field"><label for="f-mod">Main modifier<div class="help">The key every GridPilot shortcut starts with (Omarchy's SUPER).</div></label><div><select id="f-mod">${presets.map(([v, l]) => `<option value="${esc(v)}" ${v === mod ? "selected" : ""}>${esc(l)}</option>`).join("")}${presets.some(([v]) => v === mod) ? "" : `<option selected value="${esc(mod)}">${esc(mod)}</option>`}</select></div></div>
-    ${mod === "hyper" ? `<div class="field"><label>Hyper key is<div class="help">Leave Shift out so ⇧ stays the second layer.</div></label><div><input type="text" data-alias="hyper" value="${esc(cfg.modifiers.hyper ?? "")}"></div></div>` : ""}
+    ${check("general.capslock_mod", "Caps Lock is the main modifier", "Hold Caps Lock instead of the keys above; nothing to install. A tap does nothing, and Caps Lock types capitals again when GridPilot quits. If it ever gets stuck, run <span class=\"cmd\">gridpilot capslock off</span>.")}
     <div class="field"><label>Grid shortcut modifier<div class="help">Used by the Divvy shortcuts.</div></label><div><input type="text" data-alias="grid" value="${esc(cfg.modifiers.grid ?? "")}"></div></div>
     ${check("general.default_bindings", "Use the default key bindings", "Off: only the bindings you add yourself.")}
     ${check("general.mouse_follows_focus", "Move the mouse pointer to windows focused by keyboard")}

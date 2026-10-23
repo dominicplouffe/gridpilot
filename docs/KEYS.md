@@ -1,7 +1,7 @@
 # Default key bindings
 
 Generated with `gridpilot keymap --markdown` from the default config.
-`mod` is the Hyper key (`ctrl+alt+cmd`, see [HYPER.md](HYPER.md)) and `grid` is `ctrl+cmd`; change either in `[modifiers]` and every binding follows.
+`mod` is `ctrl+alt+cmd`, which Caps Lock presses for you (see [HYPER.md](HYPER.md)), and `grid` is `ctrl+cmd`; change either in `[modifiers]` and every binding follows.
 Edit `[bindings]` to add or remove keys (`"mod+m" = "none"`).
 
 ### `system` — Reload, key cheat sheet, themes, gaps, exec and introspection

@@ -57,6 +57,7 @@ fn pump() {
                 }
             }
             if engine.quit_requested {
+                crate::capslock::restore();
                 let mtm = MainThreadMarker::new().expect("main thread");
                 NSApplication::sharedApplication(mtm).terminate(None);
             }
@@ -66,6 +67,13 @@ fn pump() {
             break;
         }
     }
+}
+
+/// Queue a platform event from a callback (e.g. the Caps Lock tap) and
+/// handle it on the next turn of the run loop.
+pub(crate) fn post_event(event: PlatformEvent) {
+    enqueue(Input::Event(event));
+    after(0, pump);
 }
 
 /// Queue a command from UI code. It runs on the next turn of the run loop,
@@ -132,6 +140,8 @@ pub fn run(
         );
     }
 
+    // Whatever happens, give Caps Lock back.
+    crate::capslock::install_safety_nets();
     let poll = config.general.poll_interval_ms.max(50);
     let mut engine = Engine::new(Box::new(MacPlatform::new()), config, builtin());
     engine.config_path = config_path;

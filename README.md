@@ -47,9 +47,9 @@ No Mac handy? `gridpilot simulate` runs the real engine against a fake desktop w
 
 ## Default keys (abridged)
 
-`mod` is a **Hyper key**, Omarchy's SUPER: map Caps Lock to `ctrl+alt+cmd` (no Shift) with
-Hyperkey, Raycast or Karabiner, see [docs/HYPER.md](docs/HYPER.md). No Hyper key? Press `ctrl+alt+cmd`,
-or set `mod = "ctrl+alt"`. `grid` = `ctrl+cmd`. Remap either one in `[modifiers]`.
+`mod` is **Caps Lock**, Omarchy's SUPER: hold it and press a key, nothing to install
+([how it works](docs/HYPER.md)). Holding `ctrl+alt+cmd` does the same. `grid` = `ctrl+cmd`.
+Change either one in the settings page or `[modifiers]`.
 
 | Keys | Action |
 |---|---|
@@ -118,7 +118,7 @@ without knowing about each other.
 * [docs/RESEARCH.md](docs/RESEARCH.md): how Divvy and Omarchy work, what macOS allows, and the design decisions that follow
 * [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): data flow, and how to add a feature, layout or backend
 * [docs/ROADMAP.md](docs/ROADMAP.md): what's next
-* [docs/HYPER.md](docs/HYPER.md): setting up Caps Lock as the Hyper key
+* [docs/HYPER.md](docs/HYPER.md): Caps Lock as the `mod` key
 * [docs/BRAND.md](docs/BRAND.md): logo, palette and voice
 
 ## Status

@@ -10,12 +10,14 @@ default_bindings = true
 # How often to poll the window list, in milliseconds.
 poll_interval_ms = 250
 mouse_follows_focus = false
+# Caps Lock acts as `mod` (macOS, nothing to install; a tap does nothing).
+# Caps Lock types capitals again when GridPilot quits. See docs/HYPER.md.
+capslock_mod = true
 
 # Modifier aliases you can use in any key chord; aliases may name aliases.
-# `mod` plays the role of Omarchy's SUPER. By default it is the Hyper key:
-# Caps Lock remapped to ctrl+alt+cmd WITHOUT shift (see docs/HYPER.md),
-# so shift is free for the second layer (mod+shift+left = swap).
-# No Hyper key? Press ctrl+alt+cmd, or set mod = "ctrl+alt".
+# `mod` plays the role of Omarchy's SUPER: ctrl+alt+cmd, which Caps Lock
+# presses for you (see capslock_mod above). Shift stays free for the second
+# layer (mod+shift+left = swap).
 [modifiers]
 mod = "hyper"
 hyper = "ctrl+alt+cmd"

@@ -21,6 +21,8 @@ below is meant to land as one feature module or one backend improvement.
 - [ ] Group tab bar drawn above grouped tiles
 - [ ] Shortcut list in the grid overlay, clickable (Divvy)
 - [ ] Launch at login, signed and notarized `GridPilot.app`, Homebrew cask
+- [x] Caps Lock as `mod` with nothing to install (`hidutil` + event tap)
+- [ ] Caps Lock: re-apply the remap after a keyboard is plugged in or the Mac wakes, if macOS resets it
 - [x] Settings page (`gridpilot settings`): record shortcuts, draw grid regions, layouts, gaps, themes, rules, features
 - [ ] Settings: rules picker from open windows, theme editor
 
@@ -28,7 +30,7 @@ below is meant to land as one feature module or one backend improvement.
 
 - [ ] Mouse bindings: `mod+drag` to move, `mod+right-drag` to resize, `mod+wheel` for workspaces (CGEventTap)
 - [ ] Drag a tiled window onto another to swap; drop on an edge to split there
-- [ ] Key modes (Hyprland submaps), e.g. `mod+g` then arrows to join groups, to bring back Omarchy's third-layer keys that don't fit next to a Hyper `mod`
+- [ ] Key modes (Hyprland submaps), e.g. `mod+g` then arrows to join groups, to bring back Omarchy's third-layer keys that don't fit next to a three-modifier `mod`
 - [ ] Pseudo-tiling (`SUPER + P`), tiled fullscreen (`SUPER + CTRL + F`)
 - [ ] Workspace layouts remembered across restarts
 - [ ] Per-display workspace sets (Omarchy's "each monitor has 1–10")

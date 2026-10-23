@@ -21,6 +21,7 @@ USAGE:
     gridpilot simulate                try the engine on a fake desktop (any OS)
     gridpilot keymap [--markdown]     print the key bindings a config produces
     gridpilot settings [--no-open]    edit settings in the browser
+    gridpilot capslock off            give Caps Lock back if GridPilot didn't (macOS)
     gridpilot <command> [args...]     send a command to the running instance
 
 COMMANDS (see `gridpilot commands` for all):
@@ -63,6 +64,7 @@ fn main() -> ExitCode {
         Some("simulate") => load(&config_path(&args)).and_then(simulate::run),
         Some("keymap") => keymap(&args),
         Some("settings") => settings::run(&args),
+        Some("capslock") if args.get(1).map(String::as_str) == Some("off") => capslock_off(),
         Some(_) => ipc::send(&quote(&args)).map(|out| {
             if !out.is_empty() {
                 println!("{out}");
@@ -140,6 +142,18 @@ fn keymap(args: &[String]) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+#[cfg(target_os = "macos")]
+fn capslock_off() -> Result<(), String> {
+    gridpilot_macos::capslock::force_off()?;
+    println!("Caps Lock is back to normal.");
+    Ok(())
+}
+
+#[cfg(not(target_os = "macos"))]
+fn capslock_off() -> Result<(), String> {
+    Err("Caps Lock remapping only exists on macOS".into())
 }
 
 #[cfg(target_os = "macos")]
