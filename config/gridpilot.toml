@@ -1,0 +1,162 @@
+# GridPilot configuration
+#
+# Copy to ~/.config/gridpilot/gridpilot.toml (or run `gridpilot init`).
+# Every key is optional; the values below are the defaults.
+# Apply changes with `gridpilot reload` or mod+shift+r.
+
+[general]
+# Load the key bindings that ship with each feature (see `gridpilot keys`).
+default_bindings = true
+# How often to poll the window list, in milliseconds.
+poll_interval_ms = 250
+mouse_follows_focus = false
+
+# Modifier aliases you can use in any key chord.
+# `mod` plays the role of Omarchy's SUPER. Cmd is kept free for apps.
+# If you map Caps Lock to a Hyper key, try `mod = "hyper"`-style setups.
+[modifiers]
+mod = "ctrl+alt"
+grid = "ctrl+cmd"
+hyper = "ctrl+alt+shift+cmd"
+
+[tiling]
+# "floating" = Divvy: windows stay where you put them, the grid places them.
+# "dwindle"  = Omarchy/Hyprland auto-tiling. Also: "scrolling", "master".
+default_layout = "floating"
+# Order for `layout next` (mod+l) and `layout prev` (mod+shift+l).
+cycle = ["dwindle", "scrolling", "master", "floating"]
+gaps_inner = 10.0
+gaps_outer = 10.0
+master_ratio = 0.55
+column_width = 0.49
+pop_size = [1300.0, 900.0]
+# small, normal, large steps for resize bindings
+resize_steps = [25.0, 100.0, 300.0]
+
+[grid]
+# Columns x rows. Hold Option in the overlay to subdivide (6x4 -> 12x8).
+size = "6x4"
+screen_margin = 10.0
+window_margin = 10.0
+# Press the same shortcut again to send the window to the next display.
+cycle_displays = true
+# Keep the overlay open after placing a window.
+keep_open = false
+# Placing a tiled window with the grid floats it.
+float_on_apply = true
+
+# Divvy-style shortcuts: a name, a grid region and optional keys.
+# Region syntax: "col,row WIDTHxHEIGHT / GRID_COLSxGRID_ROWS".
+# `global = false` makes a shortcut work only while the overlay is open.
+[[grid.shortcut]]
+name = "Left half"
+keys = "grid+left"
+cells = "0,0 3x4 / 6x4"
+
+[[grid.shortcut]]
+name = "Right half"
+keys = "grid+right"
+cells = "3,0 3x4 / 6x4"
+
+[[grid.shortcut]]
+name = "Top half"
+keys = "grid+up"
+cells = "0,0 6x2 / 6x4"
+
+[[grid.shortcut]]
+name = "Bottom half"
+keys = "grid+down"
+cells = "0,2 6x2 / 6x4"
+
+[[grid.shortcut]]
+name = "Maximize"
+keys = "grid+return"
+cells = "0,0 6x4 / 6x4"
+
+[[grid.shortcut]]
+name = "Center"
+keys = "grid+c"
+cells = "1,0 4x4 / 6x4"
+
+[[grid.shortcut]]
+name = "Left third"
+keys = "grid+1"
+cells = "0,0 2x4 / 6x4"
+
+[[grid.shortcut]]
+name = "Middle third"
+keys = "grid+2"
+cells = "2,0 2x4 / 6x4"
+
+[[grid.shortcut]]
+name = "Right third"
+keys = "grid+3"
+cells = "4,0 2x4 / 6x4"
+
+[[grid.shortcut]]
+name = "Left two thirds"
+keys = "grid+4"
+cells = "0,0 4x4 / 6x4"
+
+[[grid.shortcut]]
+name = "Right two thirds"
+keys = "grid+5"
+cells = "2,0 4x4 / 6x4"
+
+[[grid.shortcut]]
+name = "Top left"
+keys = "grid+u"
+cells = "0,0 3x2 / 6x4"
+
+[[grid.shortcut]]
+name = "Top right"
+keys = "grid+i"
+cells = "3,0 3x2 / 6x4"
+
+[[grid.shortcut]]
+name = "Bottom left"
+keys = "grid+j"
+cells = "0,2 3x2 / 6x4"
+
+[[grid.shortcut]]
+name = "Bottom right"
+keys = "grid+k"
+cells = "3,2 3x2 / 6x4"
+
+[workspaces]
+# Workspaces bound to mod+1..mod+0.
+count = 10
+# Keep a workspace on a display (0 = primary), e.g. { "9" = 1 }.
+display = {}
+# Per-workspace layout, e.g. { "2" = "dwindle", "3" = "scrolling" }.
+layout = {}
+
+[theme]
+# cockpit (default), daylight, tokyo-night, catppuccin, gruvbox, nord,
+# or any ~/.config/gridpilot/themes/<name>.toml
+name = "cockpit"
+focus_border = true
+
+[features]
+# Switch off whole features, e.g. ["groups", "scratchpad"].
+disabled = []
+
+# Add or override bindings. "none" removes a default.
+[bindings]
+# "mod+return" = "exec open -na iTerm"
+# "mod+shift+b" = "exec open -a 'Google Chrome'"
+# "mod+m" = "none"
+
+# Window rules, first match wins.
+# [[rule]]
+# app = "com.apple.systempreferences"
+# float = true
+#
+# [[rule]]
+# app = "com.spotify.client"
+# workspace = "9"
+#
+# [[rule]]
+# title = "Picture in Picture"
+# float = true
+# grid = "4,3 2x1 / 6x4"

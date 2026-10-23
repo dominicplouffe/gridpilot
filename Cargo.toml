@@ -1,0 +1,17 @@
+[workspace]
+resolver = "2"
+members = ["crates/gridpilot-core", "crates/gridpilot-macos", "crates/gridpilot"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Dominic Plouffe"]
+repository = "https://github.com/dominicplouffe/gridpilot"
+rust-version = "1.80"
+
+[workspace.dependencies]
+gridpilot-core = { path = "crates/gridpilot-core" }
+gridpilot-macos = { path = "crates/gridpilot-macos" }
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
