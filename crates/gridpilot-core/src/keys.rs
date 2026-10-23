@@ -200,6 +200,67 @@ impl Chord {
     }
 }
 
+impl Key {
+    /// How the key is printed on a Mac keyboard: `F`, `←`, `Return`, `[`.
+    pub fn label(&self) -> String {
+        match self {
+            Key::Char(c) => c.to_ascii_uppercase().to_string(),
+            Key::Digit(d) => d.to_string(),
+            Key::F(n) => format!("F{n}"),
+            Key::Left => "←".into(),
+            Key::Right => "→".into(),
+            Key::Up => "↑".into(),
+            Key::Down => "↓".into(),
+            Key::Return => "Return".into(),
+            Key::Tab => "Tab".into(),
+            Key::Space => "Space".into(),
+            Key::Escape => "Esc".into(),
+            Key::Backspace => "Delete".into(),
+            Key::Delete => "Fwd Delete".into(),
+            Key::Home => "Home".into(),
+            Key::End => "End".into(),
+            Key::PageUp => "Page Up".into(),
+            Key::PageDown => "Page Down".into(),
+            Key::Grave => "`".into(),
+            Key::Minus => "-".into(),
+            Key::Equal => "=".into(),
+            Key::LeftBracket => "[".into(),
+            Key::RightBracket => "]".into(),
+            Key::Backslash => "\\".into(),
+            Key::Semicolon => ";".into(),
+            Key::Quote => "'".into(),
+            Key::Comma => ",".into(),
+            Key::Period => ".".into(),
+            Key::Slash => "/".into(),
+        }
+    }
+}
+
+impl Chord {
+    /// The keys a person presses, e.g. `Caps + ⇧ + ←` or `⌃⌘ + Return`.
+    /// `caps` is what Caps Lock presses, when it acts as a modifier.
+    pub fn describe(&self, caps: Option<Modifiers>) -> String {
+        let mut parts = Vec::new();
+        let mut mods = self.mods;
+        if let Some(c) = caps.filter(|c| !c.is_empty() && self.mods.contains(*c)) {
+            parts.push("Caps".to_string());
+            mods = Modifiers(mods.0 & !c.0);
+        }
+        // Apple's order: ⌃ ⌥ ⇧ ⌘.
+        let symbols: String =
+            [(Modifiers::CTRL, '⌃'), (Modifiers::ALT, '⌥'), (Modifiers::SHIFT, '⇧'), (Modifiers::CMD, '⌘')]
+                .iter()
+                .filter(|(m, _)| mods.contains(*m))
+                .map(|(_, s)| *s)
+                .collect();
+        if !symbols.is_empty() {
+            parts.push(symbols);
+        }
+        parts.push(self.key.label());
+        parts.join(" + ")
+    }
+}
+
 /// Modifiers an alias stands for. Aliases may name other aliases
 /// (`mod = "hyper"`, `hyper = "ctrl+alt+cmd"`).
 fn expand_alias(name: &str, aliases: &BTreeMap<String, String>, depth: u8) -> Result<Modifiers, String> {
@@ -251,6 +312,18 @@ mod tests {
         assert_eq!(c.mods, Modifiers::CTRL | Modifiers::ALT | Modifiers::CMD | Modifiers::SHIFT);
         aliases.insert("hyper".to_string(), "mod".to_string());
         assert!(Chord::parse("mod+a", &aliases).is_err(), "cycles are rejected");
+    }
+
+    #[test]
+    fn describes_chords_as_pressed() {
+        let a = BTreeMap::new();
+        let caps = Some(Modifiers::CTRL | Modifiers::ALT | Modifiers::CMD);
+        assert_eq!(Chord::parse("ctrl+alt+cmd+f", &a).unwrap().describe(caps), "Caps + F");
+        assert_eq!(Chord::parse("ctrl+alt+shift+cmd+left", &a).unwrap().describe(caps), "Caps + ⇧ + ←");
+        assert_eq!(Chord::parse("ctrl+cmd+return", &a).unwrap().describe(caps), "⌃⌘ + Return");
+        assert_eq!(Chord::parse("alt+tab", &a).unwrap().describe(caps), "⌥ + Tab");
+        assert_eq!(Chord::parse("ctrl+alt+cmd+f", &a).unwrap().describe(None), "⌃⌥⌘ + F");
+        assert_eq!(Chord::parse("ctrl+alt+backslash", &a).unwrap().describe(None), "⌃⌥ + \\");
     }
 
     #[test]

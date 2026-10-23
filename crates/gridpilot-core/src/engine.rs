@@ -243,10 +243,12 @@ impl Engine {
     }
 
     pub fn key_help(&self) -> Vec<KeyHelp> {
+        let caps = self.capslock_modifiers();
         self.keymap
             .values()
             .map(|b| KeyHelp {
                 chord: b.chord.to_string(),
+                display: b.chord.describe(caps),
                 command: b.command.clone(),
                 description: b.description.clone(),
                 feature: b.feature.clone(),

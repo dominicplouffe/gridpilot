@@ -136,13 +136,13 @@ fn keymap(args: &[String]) -> Result<(), String> {
     for k in keys {
         if markdown && k.feature != last {
             let summary = e.installed_features().iter().find(|(id, _)| *id == k.feature).map_or("", |(_, s)| *s);
-            println!("\n### `{}` — {summary}\n\n| Keys | Action | Command |\n|---|---|---|", k.feature);
+            println!("\n### `{}` — {summary}\n\n| Press | Action | Command | Chord |\n|---|---|---|---|", k.feature);
             last = k.feature.clone();
         }
         if markdown {
-            println!("| `{}` | {} | `{}` |", k.chord, k.description, k.command);
+            println!("| {} | {} | `{}` | `{}` |", k.display.replace('|', "\\|"), k.description, k.command, k.chord);
         } else {
-            println!("{:<28} {:<36} {}", k.chord, k.description, k.command);
+            println!("{:<22} {:<36} {}", k.display, k.description, k.command);
         }
     }
     Ok(())

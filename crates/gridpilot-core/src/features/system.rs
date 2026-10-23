@@ -132,7 +132,7 @@ impl Feature for SystemFeature {
 fn keys(e: &mut Engine, _: &Args) -> CmdResult {
     let help = e.key_help();
     let text: Vec<String> =
-        help.iter().map(|k| format!("{:<28} {:<36} {}", k.chord, k.description, k.command)).collect();
+        help.iter().map(|k| format!("{:<22} {:<36} {}", k.display, k.description, k.command)).collect();
     e.present(UiRequest::ShowKeys(help));
     Ok(Some(text.join("\n")))
 }

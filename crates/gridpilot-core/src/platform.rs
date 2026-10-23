@@ -102,6 +102,8 @@ pub struct GridOverlay {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct KeyHelp {
     pub chord: String,
+    /// The keys as a person presses them: `Caps + ⇧ + ←`.
+    pub display: String,
     pub command: String,
     pub description: String,
     pub feature: String,

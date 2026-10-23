@@ -92,13 +92,16 @@ pub fn show_keys(mtm: MainThreadMarker, keys: &[KeyHelp]) {
     let mut sorted: Vec<&KeyHelp> = keys.iter().collect();
     sorted.sort_by(|a, b| a.feature.cmp(&b.feature).then(a.description.cmp(&b.description)));
     let mut text = String::new();
+    if keys.iter().any(|k| k.display.starts_with("Caps")) {
+        text.push_str("Caps = hold Caps Lock while pressing the key.\n");
+    }
     let mut last = "";
     for k in sorted {
         if k.feature != last {
             text.push_str(&format!("\n{}\n", k.feature.to_uppercase()));
             last = &k.feature;
         }
-        text.push_str(&format!("  {:<30} {}\n", k.chord, k.description));
+        text.push_str(&format!("  {:<22} {}\n", k.display, k.description));
     }
 
     let theme = THEME.with(|t| t.borrow().clone());
