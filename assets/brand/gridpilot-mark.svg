@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="184 184 656 656">
+  <title>GridPilot mark</title>
+  <g fill="#8893AB" fill-opacity="0.35">
+    <rect x="648" y="184" width="192" height="192" rx="40"/>
+    <rect x="648" y="416" width="192" height="192" rx="40"/>
+    <rect x="184" y="648" width="192" height="192" rx="40"/>
+    <rect x="416" y="648" width="192" height="192" rx="40"/>
+  </g>
+  <rect x="184" y="184" width="424" height="424" rx="48" fill="#FFB020"/>
+  <path d="M676 676 L818 730 L752 752 L730 818 Z" fill="#3EC6FF" stroke="#3EC6FF" stroke-width="14" stroke-linejoin="round"/>
+</svg>
