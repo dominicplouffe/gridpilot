@@ -342,7 +342,7 @@ impl Engine {
             .map(|n: u32| n.to_string())
             .find(|n| {
                 !visible.contains(n)
-                    && self.world.workspaces.get(n).map_or(true, |ws| ws.display == display || ws.is_empty())
+                    && self.world.workspaces.get(n).is_none_or(|ws| ws.display == display || ws.is_empty())
             })
             .expect("unbounded")
     }

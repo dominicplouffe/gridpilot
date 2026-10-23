@@ -270,8 +270,8 @@ pub struct Rule {
 
 impl Rule {
     pub fn matches(&self, app: &str, title: &str) -> bool {
-        let app_ok = self.app.as_deref().map_or(true, |a| a.eq_ignore_ascii_case(app));
-        let title_ok = self.title.as_deref().map_or(true, |t| title.to_lowercase().contains(&t.to_lowercase()));
+        let app_ok = self.app.as_deref().is_none_or(|a| a.eq_ignore_ascii_case(app));
+        let title_ok = self.title.as_deref().is_none_or(|t| title.to_lowercase().contains(&t.to_lowercase()));
         (self.app.is_some() || self.title.is_some()) && app_ok && title_ok
     }
 }

@@ -181,7 +181,7 @@ fn move_workspace_to_display(e: &mut Engine, a: &Args) -> CmdResult {
         .find(|n| {
             n != &name
                 && !e.world.active.values().any(|a| a == n)
-                && e.world.workspaces.get(n).map_or(true, |ws| ws.display == from)
+                && e.world.workspaces.get(n).is_none_or(|ws| ws.display == from)
         })
         .expect("unbounded");
     e.ensure_workspace(&replacement, from);
