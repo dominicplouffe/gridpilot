@@ -113,8 +113,7 @@ without knowing about each other.
 ## Status
 
 0.1: the core is covered by unit and end-to-end tests. The macOS backend
-type-checks against the Apple targets (a CI workflow that also builds it on a
-macOS runner is in `docs/ci/ci.yml`),
+type-checks against the Apple targets and CI builds it on a macOS runner,
 but it has not yet been run on a real Mac. Expect rough edges until it has
 (see the roadmap).
 

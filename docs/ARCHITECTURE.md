@@ -149,7 +149,7 @@ with helpers (`direction`, `parse`, `has_flag`, `rest`). Return
   scratchpad, groups, pop-out, rules, display unplugging.
 * `gridpilot simulate` is the same engine interactively.
 * The macOS crate is type-checked on Linux with
-  `cargo check --target aarch64-apple-darwin`; `docs/ci/ci.yml` adds a macOS build.
+  `cargo check --target aarch64-apple-darwin`, and CI also builds it on a macOS runner.
 
 ## Conventions
 
