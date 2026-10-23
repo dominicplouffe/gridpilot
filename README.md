@@ -23,6 +23,9 @@ permission.
 
 ## Quick start
 
+Needs Rust 1.82 or newer (`rustup update`). Cargo checks this and stops with
+`rustc X is not supported ... requires rustc 1.82` on an older toolchain.
+
 ```sh
 cargo build --release -p gridpilot
 ./target/release/gridpilot init      # writes ~/.config/gridpilot/gridpilot.toml
