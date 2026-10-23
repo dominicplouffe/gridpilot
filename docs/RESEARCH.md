@@ -146,7 +146,7 @@ bindings and helper scripts. The facts below come from the Omarchy source
 | Window events | `AXObserver` notifications per app, plus `NSWorkspace` app launch/quit notifications. | v0.1 polls (`general.poll_interval_ms`, default 250 ms); observers are on the roadmap. The engine already accepts events (`PlatformEvent`). |
 | Drawing overlays | Borderless, non-activating `NSPanel`s at status-window level. | Grid overlay, HUD, key cheat sheet. |
 | Coordinates | AppKit: origin bottom-left of the primary screen. AX/Quartz: top-left. | The core uses top-left everywhere; only the backend flips. |
-| Modifier keys | Cmd is owned by apps (`cmd+w`, `cmd+t` …). There is no free "Super". | `mod` alias, default `ctrl+alt`. Omarchy's extra `CTRL` becomes `cmd`, its extra `ALT` becomes `shift`/`cmd` per binding (see §5). |
+| Modifier keys | Cmd is owned by apps (`cmd+w`, `cmd+t` …) and Cmd+Shift by macOS and apps. There is no free "Super". | `mod` alias, default a Hyper key (Caps Lock → `ctrl+alt+cmd`), Shift as the second layer (see §5). |
 
 ### Comparable macOS tools
 
@@ -190,25 +190,38 @@ per workspace, built as a feature framework.
 
 ## 5. Omarchy → GridPilot key translation
 
-`mod` = `ctrl+alt` stands in for `SUPER`. Because `mod` already contains
-Alt and Ctrl, Omarchy's *additional* modifiers are remapped:
+macOS has no free Super key: Cmd belongs to apps, and Cmd+Shift is full of
+system and app shortcuts (text selection, screenshots, Save As, redo,
+tab switching). So GridPilot's `mod` defaults to a **Hyper key**: Caps Lock
+remapped to `ctrl+alt+cmd` (without Shift), which no app uses. Shift stays
+free as the second layer, exactly like Omarchy's `SUPER + SHIFT`. Setup:
+[HYPER.md](HYPER.md).
+
+With `mod` holding three modifiers only Shift is left to add, so Omarchy's
+third-layer keys (`SUPER + ALT`, `SUPER + CTRL`, `SUPER + SHIFT + ALT`) move
+to other keys or stay commands without a default key:
 
 | Omarchy | GridPilot | Example |
 |---|---|---|
 | `SUPER + x` | `mod + x` | `mod+w` close |
-| `SUPER + SHIFT + x` | `mod + shift + x` | `mod+shift+left` swap |
-| `SUPER + CTRL + x` | `mod + cmd + x` | `mod+cmd+f` maximize |
-| `SUPER + ALT + arrows` (group) | `mod + cmd + arrows` | join group |
-| `SUPER + SHIFT + CTRL + arrows` | `mod + shift + cmd + arrows` | window to display |
-| `SUPER + SHIFT + ALT + N` | `mod + shift + cmd + N` | move silently |
-| `SUPER + ALT + L` / `SUPER + ALT + S` / `SUPER + ALT + G` | `mod + shift + l / s / g` | |
-| `SUPER + CTRL + TAB` | `mod + backslash` | former workspace |
-| `CTRL + ALT + TAB` | `mod + period` / `mod + comma` | next/prev display |
+| `SUPER + SHIFT + x` | `mod + shift + x` | `mod+shift+left` swap, `mod+shift+3` move to workspace 3 |
+| `SUPER + ALT + F` (maximize) | `mod + shift + f` | |
+| `SUPER + ALT + L` / `S` / `G` | `mod + shift + l / s / g` | layout back, to scratchpad, leave group |
+| `SUPER + ALT + HOME` (save width) | `mod + shift + home` | |
+| `SUPER + ALT + TAB` (group next/prev) | `mod + ]` / `mod + [` | like ⌘⇧] tab switching |
+| `SUPER + ALT + ←/→` (join group) | `mod + shift + [` / `mod + shift + ]` | up/down: `group join up` |
+| `SUPER + SHIFT + CTRL + arrows` (window to monitor) | `mod + shift + .` / `mod + shift + ,` | next/prev display |
+| `CTRL + ALT + TAB` (focus monitor) | `mod + .` / `mod + ,` | |
+| `SUPER + CTRL + TAB` (former workspace) | `mod + \` | |
+| `SUPER + SHIFT + F` (file manager) | `mod + e` | |
+| `SUPER + SHIFT + ALT + N` (move silently) | command: `move-to-workspace N --silent` | bind it in `[bindings]` |
+| `SUPER + SHIFT + ALT + arrows` (workspace to monitor) | command: `move-workspace-to-display next` | |
+| `SUPER + ALT + 1..5` (pick group tab) | command: `group index N` | |
+| resize "a little" / "a lot" | command: `resize width -25` / `-300` | |
 | `SUPER + SPACE` (launcher) | `mod + space` → **grid overlay** | macOS has Spotlight |
 
-With a Hyper key (Caps Lock → ctrl+alt+shift+cmd via Karabiner) set
-`mod = "hyper"`; note that shift-based variants then collide, so prefer the
-default unless you rebind those.
+No Hyper key? Press `ctrl+alt+cmd` by hand, or set `mod = "ctrl+alt"` in
+`[modifiers]`; every binding follows the alias.
 
 The complete generated table is in [KEYS.md](KEYS.md).
 

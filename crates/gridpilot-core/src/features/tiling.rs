@@ -64,23 +64,21 @@ impl Feature for TilingFeature {
         r.bind("mod+w", "close", "Close window");
         r.bind("mod+t", "float toggle", "Toggle floating/tiling");
         r.bind("mod+f", "fullscreen full", "Full screen");
-        r.bind("mod+cmd+f", "fullscreen maximize", "Maximize inside gaps");
+        r.bind("mod+shift+f", "fullscreen maximize", "Maximize inside gaps");
         r.bind("mod+o", "pop", "Pop window out (float and pin)");
         r.bind("mod+c", "center", "Centre floating window");
         r.bind("mod+j", "split toggle", "Toggle split direction");
         r.bind("mod+m", "minimize", "Minimize window");
         r.bind("mod+l", "layout next", "Next workspace layout");
         r.bind("mod+shift+l", "layout prev", "Previous workspace layout");
-        r.bind("mod+cmd+home", "width save", "Save window width");
+        r.bind("mod+shift+home", "width save", "Save window width");
         r.bind("mod+home", "width restore", "Restore window width");
 
-        let [_, normal, large] = r.config().tiling.resize_steps;
-        for (mods, step, label) in [("mod", normal, ""), ("mod+cmd", large, " a lot")] {
-            r.bind(&format!("{mods}+minus"), &format!("resize width -{step}"), &format!("Shrink width{label}"));
-            r.bind(&format!("{mods}+equal"), &format!("resize width +{step}"), &format!("Grow width{label}"));
-            r.bind(&format!("{mods}+shift+minus"), &format!("resize height -{step}"), &format!("Shrink height{label}"));
-            r.bind(&format!("{mods}+shift+equal"), &format!("resize height +{step}"), &format!("Grow height{label}"));
-        }
+        let step = r.config().tiling.resize_steps[1];
+        r.bind("mod+minus", &format!("resize width -{step}"), "Shrink width");
+        r.bind("mod+equal", &format!("resize width +{step}"), "Grow width");
+        r.bind("mod+shift+minus", &format!("resize height -{step}"), "Shrink height");
+        r.bind("mod+shift+equal", &format!("resize height +{step}"), "Grow height");
     }
 }
 

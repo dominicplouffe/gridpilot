@@ -67,24 +67,16 @@ impl Feature for WorkspacesFeature {
                 &format!("move-to-workspace {n}"),
                 &format!("Move window to workspace {n}"),
             );
-            r.bind(
-                &format!("mod+shift+cmd+{key}"),
-                &format!("move-to-workspace {n} --silent"),
-                &format!("Move window silently to workspace {n}"),
-            );
         }
         r.bind("mod+tab", "workspace next", "Next workspace");
         r.bind("mod+shift+tab", "workspace prev", "Previous workspace");
         r.bind("mod+backslash", "workspace previous", "Former workspace");
-        for d in crate::geometry::Direction::ALL {
-            r.bind(
-                &format!("mod+shift+cmd+{d}"),
-                &format!("move-to-display {d}"),
-                &format!("Move window to display {d}"),
-            );
-        }
-        r.bind("mod+shift+period", "move-workspace-to-display next", "Move workspace to next display");
-        r.bind("mod+shift+comma", "move-workspace-to-display prev", "Move workspace to previous display");
+        // `mod` already holds three modifiers, so Omarchy's third-layer keys
+        // (silent moves, moving whole workspaces) are commands without a
+        // default binding: `move-to-workspace N --silent`,
+        // `move-workspace-to-display next`.
+        r.bind("mod+shift+period", "move-to-display next", "Move window to next display");
+        r.bind("mod+shift+comma", "move-to-display prev", "Move window to previous display");
 
         r.on(|e, ev| {
             if let EngineEvent::WorkspaceShown { name, .. } = ev {

@@ -11,13 +11,15 @@ default_bindings = true
 poll_interval_ms = 250
 mouse_follows_focus = false
 
-# Modifier aliases you can use in any key chord.
-# `mod` plays the role of Omarchy's SUPER. Cmd is kept free for apps.
-# If you map Caps Lock to a Hyper key, try `mod = "hyper"`-style setups.
+# Modifier aliases you can use in any key chord; aliases may name aliases.
+# `mod` plays the role of Omarchy's SUPER. By default it is the Hyper key:
+# Caps Lock remapped to ctrl+alt+cmd WITHOUT shift (see docs/HYPER.md),
+# so shift is free for the second layer (mod+shift+left = swap).
+# No Hyper key? Press ctrl+alt+cmd, or set mod = "ctrl+alt".
 [modifiers]
-mod = "ctrl+alt"
+mod = "hyper"
+hyper = "ctrl+alt+cmd"
 grid = "ctrl+cmd"
-hyper = "ctrl+alt+shift+cmd"
 
 [tiling]
 # "floating" = Divvy: windows stay where you put them, the grid places them.
