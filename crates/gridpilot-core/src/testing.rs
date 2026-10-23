@@ -19,6 +19,10 @@ pub struct MockState {
     pub ui: Vec<UiRequest>,
     pub spawned: Vec<String>,
     pub closed: Vec<WindowId>,
+    /// Number of `set_frame` calls, to check GridPilot leaves windows alone.
+    pub set_frame_calls: usize,
+    /// Windows whose `set_frame` fails, like a fixed-size macOS window.
+    pub unmovable: Vec<WindowId>,
 }
 
 impl MockState {
@@ -99,6 +103,10 @@ impl Platform for MockPlatform {
 
     fn set_frame(&mut self, id: WindowId, frame: Rect) -> PlatformResult<()> {
         let mut s = self.0.borrow_mut();
+        s.set_frame_calls += 1;
+        if s.unmovable.contains(&id) {
+            return Err("setting AXSize failed (AXError -25200)".into());
+        }
         s.hidden.insert(id, false);
         let w = s.windows.iter_mut().find(|w| w.id == id).ok_or("no such window")?;
         w.frame = frame;

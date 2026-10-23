@@ -3,7 +3,6 @@
 use crate::command::{Args, CmdResult};
 use crate::engine::Engine;
 use crate::feature::{Feature, Registrar};
-use crate::geometry::Direction;
 use crate::platform::WindowId;
 
 pub struct GroupsFeature;
@@ -21,14 +20,11 @@ impl Feature for GroupsFeature {
         r.command("group", "group toggle|next|prev|index <n>|join <dir>|leave", "Manage tabbed window groups", group);
         r.bind("mod+g", "group toggle", "Toggle window grouping");
         r.bind("mod+shift+g", "group leave", "Move window out of group");
-        for d in Direction::ALL {
-            r.bind(&format!("mod+cmd+{d}"), &format!("group join {d}"), &format!("Move window into group {d}"));
-        }
-        r.bind("mod+cmd+tab", "group next", "Next window in group");
-        r.bind("mod+cmd+shift+tab", "group prev", "Previous window in group");
-        for i in 1..=5 {
-            r.bind(&format!("mod+cmd+{i}"), &format!("group index {i}"), &format!("Switch to group window {i}"));
-        }
+        // Tab-like keys, as ⌘⇧[ / ⌘⇧] switch tabs in most apps.
+        r.bind("mod+rightbracket", "group next", "Next window in group");
+        r.bind("mod+leftbracket", "group prev", "Previous window in group");
+        r.bind("mod+shift+leftbracket", "group join left", "Move window into group on the left");
+        r.bind("mod+shift+rightbracket", "group join right", "Move window into group on the right");
     }
 }
 

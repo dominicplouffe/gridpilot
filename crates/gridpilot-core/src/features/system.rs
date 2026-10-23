@@ -111,7 +111,7 @@ impl Feature for SystemFeature {
         r.bind("mod+shift+space", "theme next", "Next theme");
         r.bind("mod+return", "exec open -na Terminal", "Terminal");
         r.bind("mod+shift+b", "exec open -a Safari", "Browser");
-        r.bind("mod+shift+f", "exec open ~", "File manager");
+        r.bind("mod+e", "exec open ~", "File manager");
     }
 }
 

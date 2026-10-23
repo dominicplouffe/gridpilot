@@ -104,6 +104,9 @@ impl Platform for MacPlatform {
                     "AXDialog" | "AXSystemDialog" | "AXFloatingWindow" => true,
                     _ => continue,
                 };
+                // Fixed-size windows (About boxes, many settings panes)
+                // can't fill a tile, so they always float.
+                let is_dialog = is_dialog || !w.is_settable("AXSize");
                 let (Some(id), Some(frame)) = (w.window_id(), w.frame()) else { continue };
                 if frame.w < 50.0 || frame.h < 50.0 {
                     continue;

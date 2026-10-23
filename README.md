@@ -47,7 +47,9 @@ No Mac handy? `gridpilot simulate` runs the real engine against a fake desktop w
 
 ## Default keys (abridged)
 
-`mod` = `ctrl+alt` (Omarchy's SUPER) and `grid` = `ctrl+cmd`. Remap either one in `[modifiers]`.
+`mod` is a **Hyper key**, Omarchy's SUPER: map Caps Lock to `ctrl+alt+cmd` (no Shift) with
+Hyperkey, Raycast or Karabiner, see [docs/HYPER.md](docs/HYPER.md). No Hyper key? Press `ctrl+alt+cmd`,
+or set `mod = "ctrl+alt"`. `grid` = `ctrl+cmd`. Remap either one in `[modifiers]`.
 
 | Keys | Action |
 |---|---|
@@ -59,7 +61,7 @@ No Mac handy? `gridpilot simulate` runs the real engine against a fake desktop w
 | `mod+l` | Cycle layout: dwindle → scrolling → master → floating |
 | `mod+t`, `mod+f`, `mod+o` | Float, fullscreen, pop out (float + pin + centre) |
 | `mod+s`, `mod+shift+s` | Scratchpad toggle / send |
-| `mod+g`, `mod+cmd+←↑→↓` | Group toggle / join group |
+| `mod+g`, `mod+[` / `mod+]` | Group toggle / previous, next tab |
 | `mod+-` / `mod+=` | Resize |
 | `mod+k` | All keys |
 
@@ -111,6 +113,7 @@ without knowing about each other.
 * [docs/RESEARCH.md](docs/RESEARCH.md): how Divvy and Omarchy work, what macOS allows, and the design decisions that follow
 * [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): data flow, and how to add a feature, layout or backend
 * [docs/ROADMAP.md](docs/ROADMAP.md): what's next
+* [docs/HYPER.md](docs/HYPER.md): setting up Caps Lock as the Hyper key
 * [docs/BRAND.md](docs/BRAND.md): logo, palette and voice
 
 ## Status

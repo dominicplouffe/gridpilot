@@ -185,11 +185,8 @@ impl Chord {
         }
         let last = parts.len() - 1;
         for (i, part) in parts.iter().enumerate() {
-            if let Some(expansion) = aliases.get(part) {
-                for m in expansion.split('+') {
-                    mods |= Modifiers::parse_one(m.trim())
-                        .ok_or_else(|| format!("alias `{part}` expands to non-modifier `{m}`"))?;
-                }
+            if aliases.contains_key(part) {
+                mods |= expand_alias(part, aliases, 0)?;
             } else if let Some(m) = Modifiers::parse_one(part) {
                 mods |= m;
             } else if i == last {
@@ -201,6 +198,24 @@ impl Chord {
         let key = key.ok_or_else(|| format!("`{spec}` has no key, only modifiers"))?;
         Ok(Chord { mods, key })
     }
+}
+
+/// Modifiers an alias stands for. Aliases may name other aliases
+/// (`mod = "hyper"`, `hyper = "ctrl+alt+cmd"`).
+fn expand_alias(name: &str, aliases: &BTreeMap<String, String>, depth: u8) -> Result<Modifiers, String> {
+    if depth > 8 {
+        return Err(format!("alias `{name}` refers to itself"));
+    }
+    let expansion = aliases.get(name).ok_or_else(|| format!("unknown modifier `{name}`"))?;
+    let mut mods = Modifiers::NONE;
+    for m in expansion.split('+').map(|m| m.trim().to_ascii_lowercase()) {
+        mods |= match Modifiers::parse_one(&m) {
+            Some(x) => x,
+            None if aliases.contains_key(&m) => expand_alias(&m, aliases, depth + 1)?,
+            None => return Err(format!("alias `{name}` expands to non-modifier `{m}`")),
+        };
+    }
+    Ok(mods)
 }
 
 impl fmt::Display for Chord {
@@ -225,6 +240,17 @@ mod tests {
         assert_eq!(c.mods, Modifiers::CTRL | Modifiers::ALT | Modifiers::SHIFT);
         assert_eq!(c.key, Key::Left);
         assert_eq!(c.to_string(), "ctrl+alt+shift+left");
+    }
+
+    #[test]
+    fn aliases_can_refer_to_aliases() {
+        let mut aliases = BTreeMap::new();
+        aliases.insert("mod".to_string(), "hyper".to_string());
+        aliases.insert("hyper".to_string(), "ctrl+alt+cmd".to_string());
+        let c = Chord::parse("mod+shift+left", &aliases).unwrap();
+        assert_eq!(c.mods, Modifiers::CTRL | Modifiers::ALT | Modifiers::CMD | Modifiers::SHIFT);
+        aliases.insert("hyper".to_string(), "mod".to_string());
+        assert!(Chord::parse("mod+a", &aliases).is_err(), "cycles are rejected");
     }
 
     #[test]

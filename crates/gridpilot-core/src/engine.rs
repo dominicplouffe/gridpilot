@@ -42,6 +42,8 @@ pub struct Engine {
     defaults: Vec<DefaultBinding>,
     keymap: BTreeMap<Chord, Binding>,
     applied: HashMap<WindowId, Placement>,
+    /// Last platform error per window, so each one is reported once.
+    failures: HashMap<WindowId, String>,
     extensions: HashMap<TypeId, Box<dyn Any>>,
     pending: Vec<EngineEvent>,
     focus_dirty: bool,
@@ -66,6 +68,7 @@ impl Engine {
             defaults: Vec::new(),
             keymap: BTreeMap::new(),
             applied: HashMap::new(),
+            failures: HashMap::new(),
             extensions: HashMap::new(),
             pending: Vec::new(),
             focus_dirty: false,
@@ -360,7 +363,10 @@ impl Engine {
             match self.world.windows.get_mut(&info.id) {
                 Some(w) => {
                     w.info.title = info.title.clone();
-                    let expected = self.applied.get(&info.id).copied();
+                    // A window we failed to move isn't where we put it; that
+                    // is not the user dragging it.
+                    let expected =
+                        self.applied.get(&info.id).copied().filter(|_| !self.failures.contains_key(&info.id));
                     if let Some(Placement::Show(r)) = expected {
                         // Apps with a minimum size keep their own size inside
                         // a tile; only a changed position means the user moved it.
@@ -413,6 +419,9 @@ impl Engine {
             }
         }
         let id = info.id;
+        // The window is already where it is: only move it if the plan says
+        // otherwise, so floating (Divvy) workspaces never touch new windows.
+        self.applied.insert(id, Placement::Show(info.frame));
         self.world.windows.insert(
             id,
             ManagedWindow {
@@ -440,6 +449,7 @@ impl Engine {
         self.world.detach(id);
         self.world.windows.remove(&id);
         self.applied.remove(&id);
+        self.failures.remove(&id);
         if self.world.focused == Some(id) {
             self.world.focused = None;
             self.focus_fallback(&ws);
@@ -761,11 +771,20 @@ impl Engine {
                     None => Ok(()),
                 },
             };
+            // Record the attempt even when it failed, so an unmovable window
+            // isn't retried (and reported) on every poll; it is tried again
+            // when its planned placement changes.
+            self.applied.insert(id, p);
             match r {
                 Ok(()) => {
-                    self.applied.insert(id, p);
+                    self.failures.remove(&id);
                 }
-                Err(e) => errors.push(format!("window {id}: {e}")),
+                Err(e) => {
+                    if self.failures.get(&id) != Some(&e) {
+                        errors.push(format!("window {id}: {e}"));
+                        self.failures.insert(id, e);
+                    }
+                }
             }
         }
         if self.focus_dirty {

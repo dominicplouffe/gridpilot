@@ -33,11 +33,13 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         let mut modifiers = BTreeMap::new();
-        // Omarchy's SUPER. Cmd is left alone because macOS apps own it.
-        modifiers.insert("mod".into(), "ctrl+alt".into());
+        // Omarchy's SUPER: a Hyper key, i.e. Caps Lock remapped to
+        // ctrl+alt+cmd *without* shift, so shift stays free as the second
+        // layer (mod+shift+left swaps). See docs/HYPER.md.
+        modifiers.insert("mod".into(), "hyper".into());
+        modifiers.insert("hyper".into(), "ctrl+alt+cmd".into());
         // Divvy-style placement shortcuts.
         modifiers.insert("grid".into(), "ctrl+cmd".into());
-        modifiers.insert("hyper".into(), "ctrl+alt+shift+cmd".into());
         Self {
             general: General::default(),
             modifiers,

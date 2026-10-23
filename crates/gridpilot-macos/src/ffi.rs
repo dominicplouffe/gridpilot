@@ -93,6 +93,7 @@ extern "C" {
     pub fn AXUIElementCreateApplication(pid: pid_t) -> AXUIElementRef;
     pub fn AXUIElementCopyAttributeValue(el: AXUIElementRef, attr: CFStringRef, value: *mut CFTypeRef) -> AXError;
     pub fn AXUIElementSetAttributeValue(el: AXUIElementRef, attr: CFStringRef, value: CFTypeRef) -> AXError;
+    pub fn AXUIElementIsAttributeSettable(el: AXUIElementRef, attr: CFStringRef, settable: *mut Boolean) -> AXError;
     pub fn AXUIElementPerformAction(el: AXUIElementRef, action: CFStringRef) -> AXError;
     pub fn AXUIElementSetMessagingTimeout(el: AXUIElementRef, seconds: f32) -> AXError;
     pub fn AXValueCreate(kind: u32, value: *const c_void) -> AXValueRef;
