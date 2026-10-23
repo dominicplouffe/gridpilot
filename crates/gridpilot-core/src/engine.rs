@@ -179,6 +179,18 @@ impl Engine {
         &self.keymap
     }
 
+    /// Bindings as features declared them, before config overrides.
+    pub fn default_bindings(&self) -> &[DefaultBinding] {
+        &self.defaults
+    }
+
+    /// Turn global hotkeys off (e.g. while the settings page records a
+    /// shortcut, so GridPilot doesn't swallow the keys) or back on.
+    pub fn set_hotkeys_enabled(&mut self, on: bool) -> Result<(), String> {
+        let chords: Vec<Chord> = if on { self.keymap.keys().copied().collect() } else { Vec::new() };
+        self.platform.register_hotkeys(&chords)
+    }
+
     pub fn installed_features(&self) -> &[(&'static str, &'static str)] {
         &self.installed
     }

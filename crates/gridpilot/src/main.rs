@@ -1,6 +1,7 @@
 //! `gridpilot` — run the window manager, or talk to a running one.
 
 mod ipc;
+mod settings;
 mod simulate;
 
 use gridpilot_core::config::{Config, REFERENCE_CONFIG};
@@ -19,6 +20,7 @@ USAGE:
     gridpilot check [PATH]            validate a config and list binding conflicts
     gridpilot simulate                try the engine on a fake desktop (any OS)
     gridpilot keymap [--markdown]     print the key bindings a config produces
+    gridpilot settings [--no-open]    edit settings in the browser
     gridpilot <command> [args...]     send a command to the running instance
 
 COMMANDS (see `gridpilot commands` for all):
@@ -28,7 +30,7 @@ COMMANDS (see `gridpilot commands` for all):
     keys | reload | theme next | windows | workspaces
 ";
 
-fn config_path(args: &[String]) -> PathBuf {
+pub(crate) fn config_path(args: &[String]) -> PathBuf {
     args.iter()
         .position(|a| a == "--config")
         .and_then(|i| args.get(i + 1))
@@ -60,6 +62,7 @@ fn main() -> ExitCode {
         Some("check") => check(args.get(1).map(PathBuf::from).unwrap_or_else(Config::default_path)),
         Some("simulate") => load(&config_path(&args)).and_then(simulate::run),
         Some("keymap") => keymap(&args),
+        Some("settings") => settings::run(&args),
         Some(_) => ipc::send(&quote(&args)).map(|out| {
             if !out.is_empty() {
                 println!("{out}");

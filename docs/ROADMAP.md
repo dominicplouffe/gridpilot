@@ -21,7 +21,8 @@ below is meant to land as one feature module or one backend improvement.
 - [ ] Group tab bar drawn above grouped tiles
 - [ ] Shortcut list in the grid overlay, clickable (Divvy)
 - [ ] Launch at login, signed and notarized `GridPilot.app`, Homebrew cask
-- [ ] Settings window for grid size, margins and shortcuts (record a shortcut by drawing it, like Divvy)
+- [x] Settings page (`gridpilot settings`): record shortcuts, draw grid regions, layouts, gaps, themes, rules, features
+- [ ] Settings: rules picker from open windows, theme editor
 
 ## 0.3 — more Omarchy
 

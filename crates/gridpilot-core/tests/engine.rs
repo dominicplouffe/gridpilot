@@ -276,3 +276,14 @@ fn a_window_that_cannot_be_moved_is_reported_once_not_every_poll() {
     assert_eq!(failures, 1, "{:#?}", e.warnings);
     assert_eq!(p.state().set_frame_calls, 1, "not retried while the plan is unchanged");
 }
+
+#[test]
+fn hotkeys_can_be_paused_for_recording() {
+    let (mut e, p) = engine_with(1, Config::default());
+    let all = p.state().hotkeys.len();
+    assert!(all > 50);
+    e.dispatch("hotkeys off").unwrap();
+    assert!(p.state().hotkeys.is_empty());
+    e.dispatch("hotkeys on").unwrap();
+    assert_eq!(p.state().hotkeys.len(), all);
+}

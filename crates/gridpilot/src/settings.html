@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GridPilot Settings</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='184 184 656 656'%3E%3Cg fill='%238893ab' opacity='.5'%3E%3Crect x='648' y='184' width='192' height='192' rx='40'/%3E%3Crect x='648' y='416' width='192' height='192' rx='40'/%3E%3Crect x='184' y='648' width='192' height='192' rx='40'/%3E%3Crect x='416' y='648' width='192' height='192' rx='40'/%3E%3C/g%3E%3Crect x='184' y='184' width='424' height='424' rx='48' fill='%23ffb020'/%3E%3Cpath d='M676 676 L818 730 L752 752 L730 818 Z' fill='%233ec6ff'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #0b1120; --surface: #141c2f; --surface-2: #1a2440; --line: #26324d;
+  --accent: #ffb020; --accent-ink: #0b1120; --alt: #3ec6ff; --text: #e7ecf5; --muted: #8893ab;
+  --danger: #f2545b; --ok: #34d399; --radius: 10px;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f7fb; --surface: #ffffff; --surface-2: #eef1f7; --line: #d5dbe7;
+    --accent: #c97a00; --accent-ink: #ffffff; --alt: #0284c7; --text: #0b1120; --muted: #5a6478;
+    --danger: #d62f3a; --ok: #059669; color-scheme: light;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--text); font: 14px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif; }
+a { color: var(--alt); }
+.app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+nav { background: var(--surface); border-right: 1px solid var(--line); padding: 20px 12px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 4px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 18px; font-weight: 700; font-size: 17px; letter-spacing: -0.3px; }
+.brand b { color: var(--accent); font-weight: 700; }
+.brand span { color: var(--muted); }
+nav button { all: unset; cursor: pointer; padding: 8px 12px; border-radius: 8px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+nav button:hover { background: var(--surface-2); color: var(--text); }
+nav button[aria-current="true"] { background: var(--surface-2); color: var(--text); box-shadow: inset 3px 0 0 var(--accent); }
+nav .spacer { flex: 1; }
+nav .meta { color: var(--muted); font-size: 12px; padding: 8px 12px; word-break: break-all; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
+main { padding: 28px 36px 120px; max-width: 1060px; width: 100%; }
+h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.3px; }
+h2 { font-size: 15px; margin: 28px 0 10px; }
+.lede { color: var(--muted); margin: 0 0 20px; max-width: 70ch; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 14px; }
+.banner { border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px; border: 1px solid; }
+.banner.warn { border-color: color-mix(in srgb, var(--accent) 50%, transparent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.banner.err { border-color: color-mix(in srgb, var(--danger) 60%, transparent); background: color-mix(in srgb, var(--danger) 10%, transparent); }
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.field { display: grid; grid-template-columns: 220px 1fr; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.field:last-child { border-bottom: 0; }
+.field .help { color: var(--muted); font-size: 12px; }
+input[type=text], input[type=number], select { background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 7px; padding: 6px 9px; font: inherit; min-width: 0; }
+input[type=number] { width: 90px; }
+input:focus, select:focus, button:focus-visible { outline: 2px solid var(--alt); outline-offset: 1px; }
+input[type=range] { accent-color: var(--accent); width: 220px; }
+input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
+.btn { background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: 7px; padding: 6px 12px; font: inherit; cursor: pointer; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+.btn.small { padding: 3px 9px; font-size: 12px; }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+.btn.ghost:hover { color: var(--text); border-color: var(--line); }
+.btn.danger:hover { color: var(--danger); border-color: var(--danger); }
+.btn[disabled] { opacity: .45; cursor: default; }
+.search { width: 280px; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; color: var(--muted); font-weight: 500; font-size: 12px; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+td { padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr.off td:not(.actions) { opacity: .45; }
+tr.group td { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding-top: 18px; border-bottom: 0; }
+.cmd { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.actions { white-space: nowrap; text-align: right; }
+.chord { all: unset; cursor: pointer; display: inline-flex; gap: 3px; align-items: center; padding: 3px; border-radius: 7px; border: 1px dashed transparent; min-height: 24px; }
+.chord:hover { border-color: var(--line); }
+.chord:focus-visible { outline: 2px solid var(--alt); }
+.chord.recording { border-color: var(--alt); color: var(--alt); padding: 3px 9px; }
+.chord.empty { color: var(--muted); padding: 3px 9px; font-style: italic; }
+kbd { font-family: var(--mono); font-size: 12px; background: var(--surface-2); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; min-width: 22px; text-align: center; }
+kbd.alias { background: color-mix(in srgb, var(--accent) 18%, var(--surface-2)); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.tag { font-size: 11px; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+.tag.changed { color: var(--alt); border-color: color-mix(in srgb, var(--alt) 50%, transparent); }
+.tag.bad { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 50%, transparent); }
+.shortcuts { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.sc { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.sc input[type=text] { width: 100%; font-weight: 600; }
+.mini { display: grid; gap: 3px; aspect-ratio: 16 / 10; background: var(--bg); padding: 6px; border-radius: 8px; border: 1px solid var(--line); user-select: none; touch-action: none; }
+.mini div { background: var(--line); border-radius: 3px; cursor: crosshair; }
+.mini div.on { background: var(--accent); }
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.theme { all: unset; cursor: pointer; border-radius: var(--radius); border: 2px solid var(--line); overflow: hidden; }
+.theme[aria-pressed="true"] { border-color: var(--accent); }
+.theme .preview { height: 84px; padding: 10px; display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; gap: 5px; }
+.theme .preview i { border-radius: 4px; }
+.theme .name { padding: 8px 10px; font-size: 13px; background: var(--surface); display: flex; justify-content: space-between; }
+.switch { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.switch:last-child { border-bottom: 0; }
+.switch .grow { flex: 1; }
+.switch .help { color: var(--muted); font-size: 12px; }
+footer { position: fixed; left: 220px; right: 0; bottom: 0; background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(8px); border-top: 1px solid var(--line); padding: 12px 36px; display: flex; gap: 12px; align-items: center; }
+footer .status { flex: 1; color: var(--muted); }
+footer .status.dirty { color: var(--text); }
+details.warnings summary { cursor: pointer; color: var(--accent); }
+details.warnings li { color: var(--muted); font-size: 12px; font-family: var(--mono); }
+.toast { position: fixed; right: 24px; bottom: 76px; background: var(--surface-2); border: 1px solid var(--line); border-left: 3px solid var(--ok); border-radius: 8px; padding: 10px 14px; max-width: 420px; box-shadow: 0 8px 30px rgba(0,0,0,.3); transition: opacity .2s; }
+.toast.err { border-left-color: var(--danger); }
+.hidden { display: none !important; }
+.layout-order li { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+.layout-order { list-style: none; margin: 0; padding: 0; }
+.done { display: grid; place-items: center; height: 100vh; text-align: center; color: var(--muted); }
+@media (max-width: 800px) {
+  .app { grid-template-columns: 1fr; }
+  nav { position: static; height: auto; flex-direction: row; overflow-x: auto; padding: 10px 12px; align-items: center; }
+  nav button { white-space: nowrap; }
+  nav .brand { padding: 0 8px 0 4px; }
+  nav .spacer, nav .meta { display: none; }
+  .keys-table th:nth-child(3), .keys-table td:nth-child(3) { display: none; }
+  .card { overflow-x: auto; }
+  .search { width: 100%; }
+  footer { left: 0; padding: 12px 16px; }
+  main { padding: 20px 16px 120px; min-width: 0; }
+  .field { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav aria-label="Sections">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="184 184 656 656" aria-hidden="true">
+        <g fill="currentColor" opacity=".3"><rect x="648" y="184" width="192" height="192" rx="40"/><rect x="648" y="416" width="192" height="192" rx="40"/><rect x="184" y="648" width="192" height="192" rx="40"/><rect x="416" y="648" width="192" height="192" rx="40"/></g>
+        <rect x="184" y="184" width="424" height="424" rx="48" fill="var(--accent)"/>
+        <path d="M676 676 L818 730 L752 752 L730 818 Z" fill="var(--alt)" stroke="var(--alt)" stroke-width="14" stroke-linejoin="round"/>
+      </svg>
+      <div><span>Grid</span><b>Pilot</b></div>
+    </div>
+    <button data-tab="keys">Keys</button>
+    <button data-tab="grid">Grid shortcuts</button>
+    <button data-tab="tiling">Tiling</button>
+    <button data-tab="workspaces">Workspaces</button>
+    <button data-tab="rules">Window rules</button>
+    <button data-tab="appearance">Appearance</button>
+    <button data-tab="features">Features</button>
+    <button data-tab="general">General</button>
+    <div class="spacer"></div>
+    <div class="meta" id="meta"></div>
+  </nav>
+  <main id="main" tabindex="-1"><p class="lede">Loading…</p></main>
+</div>
+<footer>
+  <div class="status" id="status">No changes</div>
+  <details class="warnings hidden" id="warnings"><summary></summary><ul></ul></details>
+  <button class="btn" id="revert" disabled>Revert</button>
+  <button class="btn primary" id="save" disabled>Save</button>
+  <button class="btn ghost" id="done" title="Stop the settings server">Done</button>
+</footer>
+<div class="toast hidden" id="toast" role="status"></div>
+
+<script>
+"use strict";
+const TOKEN = "__GRIDPILOT_TOKEN__";
+const MODS = ["ctrl", "alt", "shift", "cmd"];
+const SYMBOL = { ctrl: "⌃", alt: "⌥", shift: "⇧", cmd: "⌘" };
+const KEY_LABEL = { left: "←", right: "→", up: "↑", down: "↓", return: "⏎", tab: "⇥", space: "Space", escape: "esc",
+  backspace: "⌫", delete: "⌦", home: "Home", end: "End", pageup: "PgUp", pagedown: "PgDn", grave: "`", minus: "-",
+  equal: "=", leftbracket: "[", rightbracket: "]", backslash: "\\", semicolon: ";", quote: "'", comma: ",", period: ".", slash: "/" };
+const CODE_KEY = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down", Enter: "return", NumpadEnter: "return",
+  Tab: "tab", Space: "space", Escape: "escape", Backspace: "backspace", Delete: "delete", Home: "home", End: "end",
+  PageUp: "pageup", PageDown: "pagedown", Backquote: "grave", Minus: "minus", Equal: "equal", BracketLeft: "leftbracket",
+  BracketRight: "rightbracket", Backslash: "backslash", Semicolon: "semicolon", Quote: "quote", Comma: "comma",
+  Period: "period", Slash: "slash" };
+// Shortcuts macOS keeps for itself or that nearly every app relies on.
+const RESERVED = { "cmd+tab": "app switcher", "cmd+space": "Spotlight", "cmd+q": "quit app", "cmd+w": "close window",
+  "shift+cmd+3": "screenshot", "shift+cmd+4": "screenshot", "shift+cmd+5": "screenshot", "ctrl+up": "Mission Control",
+  "ctrl+down": "App Exposé", "ctrl+left": "switch Space", "ctrl+right": "switch Space", "ctrl+cmd+q": "lock screen",
+  "ctrl+cmd+space": "emoji picker", "ctrl+cmd+f": "app full screen", "alt+cmd+escape": "force quit" };
+const FEATURE_LABEL = { system: "System", grid: "Grid", focus: "Focus", tiling: "Tiling", workspaces: "Workspaces",
+  scratchpad: "Scratchpad", groups: "Groups" };
+
+let S = null, cfg = null, savedJson = "", validation = { warnings: [], keymap: [] }, tab = "keys", filter = "";
+const $ = (sel, root = document) => root.querySelector(sel);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const clone = (v) => JSON.parse(JSON.stringify(v));
+
+async function api(path, body) {
+  const r = await fetch(path, {
+    method: body === undefined ? "GET" : "POST",
+    headers: { "X-GridPilot-Token": TOKEN, "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const data = await r.json().catch(() => ({ error: "bad response" }));
+  if (!r.ok) throw new Error(data.error || r.statusText);
+  return data;
+}
+
+// ---------- chords ----------
+function modName(n) {
+  n = n.toLowerCase();
+  if (n === "control") return "ctrl";
+  if (n === "opt" || n === "option") return "alt";
+  if (["command", "super", "win", "meta"].includes(n)) return "cmd";
+  return MODS.includes(n) ? n : null;
+}
+function aliasMods(name, depth = 0) {
+  const exp = cfg.modifiers[name];
+  if (exp == null || depth > 8) return null;
+  const set = new Set();
+  for (const raw of exp.split("+")) {
+    const p = raw.trim().toLowerCase();
+    const m = modName(p);
+    if (m) { set.add(m); continue; }
+    const inner = aliasMods(p, depth + 1);
+    if (!inner) return null;
+    inner.forEach((x) => set.add(x));
+  }
+  return set;
+}
+function parseChord(spec) {
+  if (!spec) return null;
+  const parts = spec.split("+").map((p) => p.trim().toLowerCase());
+  if (parts.some((p) => !p)) return null;
+  const key = parts.pop();
+  if (modName(key) || cfg.modifiers[key] != null) return null;
+  const mods = new Set();
+  for (const p of parts) {
+    const m = modName(p);
+    if (m) mods.add(m);
+    else { const a = aliasMods(p); if (!a) return null; a.forEach((x) => mods.add(x)); }
+  }
+  return { mods, key };
+}
+// Same order as the Rust side prints: ctrl+alt+shift+cmd+key.
+function canonical(spec) {
+  const c = parseChord(spec);
+  return c ? [...MODS.filter((m) => c.mods.has(m)), c.key].join("+") : null;
+}
+function aliasOrder() {
+  const names = Object.keys(cfg.modifiers);
+  return ["mod", "grid", ...names.filter((n) => n !== "mod" && n !== "grid")].filter((n) => cfg.modifiers[n] != null);
+}
+// Express a modifier set with the best-fitting alias: {ctrl,alt,cmd,shift}+x -> mod+shift+x.
+function withAlias(mods, key) {
+  for (const name of aliasOrder()) {
+    const a = aliasMods(name);
+    if (a && a.size && [...a].every((m) => mods.has(m))) {
+      const rest = MODS.filter((m) => mods.has(m) && !a.has(m));
+      return [name, ...rest, key].join("+");
+    }
+  }
+  return [...MODS.filter((m) => mods.has(m)), key].join("+");
+}
+function chordHtml(spec) {
+  const c = parseChord(spec);
+  if (!c) return `<kbd>${esc(spec)}</kbd>`;
+  const pretty = withAlias(c.mods, c.key).split("+");
+  const key = pretty.pop();
+  return pretty.map((p) => MODS.includes(p) ? `<kbd title="${p}">${SYMBOL[p]}</kbd>` : `<kbd class="alias" title="${esc([...aliasMods(p)].join("+"))}">${esc(aliasLabel(p))}</kbd>`).join("") +
+    `<kbd>${esc(KEY_LABEL[key] || key.toUpperCase())}</kbd>`;
+}
+function aliasLabel(name) {
+  if (name === "mod") return cfg.modifiers.mod === "hyper" ? "Hyper" : "mod";
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+function eventKey(e) {
+  if (/^Key[A-Z]$/.test(e.code)) return e.code.slice(3).toLowerCase();
+  if (/^Digit[0-9]$/.test(e.code)) return e.code.slice(5);
+  if (/^F([1-9]|1[0-9]|20)$/.test(e.code)) return e.code.toLowerCase();
+  return CODE_KEY[e.code] || null;
+}
+
+// ---------- recording ----------
+let recording = null;
+function record(el, onChord) {
+  stopRecording();
+  recording = { el, onChord, html: el.innerHTML, timer: setTimeout(stopRecording, 15000) };
+  el.classList.add("recording");
+  el.textContent = "Press the new shortcut… (esc cancels)";
+  api("/api/hotkeys", { on: false }).catch(() => {});
+}
+function stopRecording(chord) {
+  if (!recording) return;
+  const r = recording;
+  recording = null;
+  clearTimeout(r.timer);
+  r.el.classList.remove("recording");
+  r.el.innerHTML = r.html;
+  api("/api/hotkeys", { on: true }).catch(() => {});
+  if (chord) r.onChord(chord);
+}
+window.addEventListener("keydown", (e) => {
+  if (!recording) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const key = eventKey(e);
+  if (!key) return; // a modifier on its own: keep waiting
+  const mods = new Set();
+  if (e.ctrlKey) mods.add("ctrl");
+  if (e.altKey) mods.add("alt");
+  if (e.shiftKey) mods.add("shift");
+  if (e.metaKey) mods.add("cmd");
+  if (key === "escape" && mods.size === 0) return stopRecording();
+  if (mods.size === 0 && !/^f\d+$/.test(key)) {
+    toast("Use at least one modifier (Hyper, ⌃, ⌥, ⌘…), or GridPilot would steal that key from every app.", true);
+    return;
+  }
+  stopRecording(withAlias(mods, key));
+}, true);
+
+// ---------- key bindings model ----------
+function bindingsByCanon() {
+  const m = new Map();
+  for (const [k, v] of Object.entries(cfg.bindings)) {
+    const c = canonical(k);
+    if (c) m.set(c, { key: k, value: v });
+  }
+  return m;
+}
+function defaultRows() { return S.defaults.filter((d) => !d.from_config); }
+function defaultCanons() { return new Set(defaultRows().map((d) => canonical(d.chord)).filter(Boolean)); }
+// Where a default row's action currently lives.
+function rowState(d) {
+  const by = bindingsByCanon();
+  const dc = canonical(d.chord);
+  const here = by.get(dc);
+  const defaults = defaultCanons();
+  const moved = Object.entries(cfg.bindings).find(([k, v]) => v === d.command && !defaults.has(canonical(k)));
+  if (here && here.value === "none") return moved ? { chord: moved[0], status: "changed" } : { chord: null, status: "off" };
+  if (here && here.value !== d.command) return { chord: null, status: "replaced", by: here.value };
+  return { chord: d.chord, status: moved ? "extra" : "default", extra: moved && moved[0] };
+}
+function setRowChord(d, chord) {
+  const dc = canonical(d.chord);
+  removeMoved(d);
+  for (const [k] of Object.entries(cfg.bindings)) if (canonical(k) === dc) delete cfg.bindings[k];
+  if (chord && canonical(chord) !== dc) {
+    cfg.bindings[d.chord] = "none";
+    cfg.bindings[chord] = d.command;
+  }
+}
+function removeMoved(d) {
+  const defaults = defaultCanons();
+  for (const [k, v] of Object.entries(cfg.bindings)) if (v === d.command && !defaults.has(canonical(k))) delete cfg.bindings[k];
+}
+function disableRow(d) {
+  removeMoved(d);
+  for (const [k] of Object.entries(cfg.bindings)) if (canonical(k) === canonical(d.chord)) delete cfg.bindings[k];
+  cfg.bindings[d.chord] = "none";
+}
+// Effective owner of a chord, from the last server validation.
+function owner(spec) {
+  const c = canonical(spec);
+  return c && validation.keymap.find((k) => k.chord === c);
+}
+function confirmChord(chord, command) {
+  const c = canonical(chord);
+  const taken = owner(chord);
+  if (taken && taken.command !== command && !confirm(`${chord} is already “${taken.description}”. Use it for this instead?`)) return false;
+  const reserved = Object.entries(RESERVED).find(([k]) => canonical(k) === c);
+  if (reserved && !confirm(`macOS uses this shortcut for ${reserved[1]}. Use it anyway?`)) return false;
+  return true;
+}
+
+// ---------- rendering ----------
+function render() {
+  document.querySelectorAll("nav button[data-tab]").forEach((b) => b.setAttribute("aria-current", String(b.dataset.tab === tab)));
+  const main = $("#main");
+  const scroll = window.scrollY;
+  main.innerHTML = (S.error ? `<div class="banner err"><b>Your config file has an error</b>, so the page shows defaults.<br><span class="cmd">${esc(S.error)}</span><br>Saving replaces it with these settings; the old file is kept as <span class="cmd">gridpilot.toml.bak</span>.</div>` : "") +
+    { keys: keysTab, grid: gridTab, tiling: tilingTab, workspaces: workspacesTab, rules: rulesTab,
+      appearance: appearanceTab, features: featuresTab, general: generalTab }[tab]();
+  window.scrollTo(0, scroll);
+  updateFooter();
+}
+
+function keysTab() {
+  const offFeatures = new Set(cfg.features.disabled);
+  const q = filter.toLowerCase();
+  const rows = defaultRows().filter((d) => !q || [d.description, d.command, d.feature, d.chord].join(" ").toLowerCase().includes(q));
+  let html = `<h1>Keys</h1><p class="lede">Click a shortcut and press the keys you want. ${cfg.modifiers.mod === "hyper"
+    ? `<kbd class="alias">Hyper</kbd> is Caps Lock remapped to ⌃⌥⌘ (see <a href="https://github.com/dominicplouffe/gridpilot/blob/main/docs/HYPER.md" target="_blank" rel="noopener">HYPER.md</a>).` : ""}
+    GridPilot pauses its own hotkeys while you record.</p>`;
+  if (!cfg.general.default_bindings) html += `<div class="banner warn">Default bindings are off (General), so only your own bindings below are active.</div>`;
+  html += `<div class="row" style="margin-bottom:12px"><input type="text" class="search" id="filter" placeholder="Filter actions…" value="${esc(filter)}" aria-label="Filter actions"></div>`;
+  html += `<div class="card" style="padding:4px 10px"><table class="keys-table"><thead><tr><th>Action</th><th>Shortcut</th><th>Command</th><th></th></tr></thead><tbody>`;
+  let last = "";
+  for (const d of rows) {
+    if (d.feature !== last) {
+      html += `<tr class="group"><td colspan="4">${esc(FEATURE_LABEL[d.feature] || d.feature)}${offFeatures.has(d.feature) ? " · feature off" : ""}</td></tr>`;
+      last = d.feature;
+    }
+    const st = rowState(d);
+    const idx = S.defaults.indexOf(d);
+    const off = st.status === "off" || st.status === "replaced" || offFeatures.has(d.feature) || !cfg.general.default_bindings && st.status === "default";
+    const chord = st.chord ? `<button class="chord" data-record="${idx}" title="Click to change">${chordHtml(st.chord)}</button>`
+      : `<button class="chord empty" data-record="${idx}">${st.status === "replaced" ? `taken by ${esc(st.by)}` : "none"}</button>`;
+    const tag = st.status === "changed" ? ` <span class="tag changed">changed</span>` : st.status === "off" ? ` <span class="tag">off</span>` : st.status === "replaced" ? ` <span class="tag bad">replaced</span>` : "";
+    html += `<tr class="${off ? "off" : ""}"><td>${esc(d.description)}${tag}</td><td>${chord}</td><td class="cmd">${esc(d.command)}</td>
+      <td class="actions">${st.status !== "default" ? `<button class="btn small ghost" data-reset="${idx}">Reset</button>` : ""}
+      ${st.status !== "off" ? `<button class="btn small ghost danger" data-disable="${idx}" title="Remove this shortcut">Remove</button>` : ""}</td></tr>`;
+  }
+  html += `</tbody></table></div>`;
+
+  const defaults = defaultCanons();
+  const moved = new Set(defaultRows().map((d) => rowState(d)).filter((s) => s.status === "changed" || s.status === "extra").map((s) => canonical(s.chord || s.extra)));
+  const custom = Object.entries(cfg.bindings).filter(([k, v]) => v !== "none" && !moved.has(canonical(k)) && !(defaults.has(canonical(k)) && defaultRows().some((d) => canonical(d.chord) === canonical(k) && d.command === v)));
+  html += `<h2>Your own bindings</h2><p class="lede">Bind any command, e.g. <span class="cmd">exec open -a Mail</span> or <span class="cmd">move-to-workspace 3 --silent</span>.</p>
+    <div class="card" style="padding:4px 10px"><table><thead><tr><th>Shortcut</th><th>Command</th><th></th></tr></thead><tbody>`;
+  custom.forEach(([k, v]) => {
+    html += `<tr><td><button class="chord" data-custom-key="${esc(k)}">${chordHtml(k)}</button>${canonical(k) ? "" : ` <span class="tag bad">invalid</span>`}</td>
+      <td><input type="text" list="commands" data-custom-cmd="${esc(k)}" value="${esc(v)}" style="width:100%"></td>
+      <td class="actions"><button class="btn small ghost danger" data-custom-del="${esc(k)}">Delete</button></td></tr>`;
+  });
+  html += `<tr><td colspan="3"><button class="btn small" id="add-binding">+ Add binding</button></td></tr></tbody></table></div>
+    <datalist id="commands">${S.commands.map((c) => `<option value="${esc(c.name)}">${esc(c.usage)}</option>`).join("")}</datalist>`;
+  return html;
+}
+
+function parseCells(spec) {
+  const m = /^\s*(\d+)\s*,\s*(\d+)\s+(\d+)\s*[xX]\s*(\d+)\s*(?:\/\s*(\d+)\s*[xX]\s*(\d+))?\s*$/.exec(spec || "");
+  if (!m) return null;
+  const [col, row, w, h] = m.slice(1, 5).map(Number);
+  const [gc, gr] = m[5] ? [Number(m[5]), Number(m[6])] : gridSize();
+  return { col, row, w, h, gc, gr };
+}
+function gridSize() { const [c, r] = cfg.grid.size.split(/x/i).map(Number); return [c, r]; }
+function miniHtml(i, cells) {
+  const p = parseCells(cells) || { col: 0, row: 0, w: 1, h: 1, gc: gridSize()[0], gr: gridSize()[1] };
+  let h = `<div class="mini" data-mini="${i}" data-gc="${p.gc}" data-gr="${p.gr}" style="grid-template-columns:repeat(${p.gc},1fr);grid-template-rows:repeat(${p.gr},1fr)" aria-label="Region: drag to select">`;
+  for (let r = 0; r < p.gr; r++) for (let c = 0; c < p.gc; c++) {
+    const on = c >= p.col && c < p.col + p.w && r >= p.row && r < p.row + p.h;
+    h += `<div data-c="${c}" data-r="${r}" class="${on ? "on" : ""}"></div>`;
+  }
+  return h + `</div>`;
+}
+function gridTab() {
+  let html = `<h1>Grid shortcuts</h1><p class="lede">Divvy-style shortcuts: drag on the little grid to choose where the window goes, then click the shortcut to record keys. Pressing a shortcut again sends the window to the next display${cfg.grid.cycle_displays ? "" : " (turned off on the Tiling page)"}.</p><div class="shortcuts">`;
+  cfg.grid.shortcut.forEach((s, i) => {
+    html += `<div class="sc"><input type="text" data-sc-name="${i}" value="${esc(s.name)}" aria-label="Shortcut name">
+      ${miniHtml(i, s.cells)}
+      <div class="row" style="justify-content:space-between">
+        ${s.keys ? `<button class="chord" data-sc-keys="${i}">${chordHtml(s.keys)}</button>` : `<button class="chord empty" data-sc-keys="${i}">no keys</button>`}
+        <span class="cmd">${esc(s.cells)}</span>
+      </div>
+      <div class="row" style="justify-content:space-between">
+        <label class="row" style="gap:6px"><input type="checkbox" data-sc-global="${i}" ${s.global ? "checked" : ""}> Works everywhere</label>
+        <span>${s.keys ? `<button class="btn small ghost" data-sc-clear="${i}">Clear keys</button>` : ""}<button class="btn small ghost danger" data-sc-del="${i}">Delete</button></span>
+      </div></div>`;
+  });
+  html += `</div><p><button class="btn" id="add-shortcut">+ Add shortcut</button></p>
+    <p class="lede">Unticking “Works everywhere” makes a shortcut local: it only works while the grid overlay is open, like Divvy's local shortcuts.</p>`;
+  return html;
+}
+
+function num(path, label, help, attrs = "") {
+  return `<div class="field"><label for="f-${path}">${label}${help ? `<div class="help">${help}</div>` : ""}</label><div><input type="number" id="f-${path}" data-path="${path}" data-type="number" value="${esc(get(path))}" ${attrs}></div></div>`;
+}
+function range(path, label, help, min, max, step) {
+  const v = get(path);
+  return `<div class="field"><label for="f-${path}">${label}${help ? `<div class="help">${help}</div>` : ""}</label><div class="row"><input type="range" id="f-${path}" data-path="${path}" data-type="number" min="${min}" max="${max}" step="${step}" value="${esc(v)}"><output>${v}</output></div></div>`;
+}
+function check(path, label, help) {
+  return `<div class="switch"><input type="checkbox" id="f-${path}" data-path="${path}" data-type="bool" ${get(path) ? "checked" : ""}><label class="grow" for="f-${path}">${label}${help ? `<div class="help">${help}</div>` : ""}</label></div>`;
+}
+function get(path) { return path.split(".").reduce((o, k) => (o == null ? o : o[k]), cfg); }
+function set(path, value) {
+  const keys = path.split(".");
+  const last = keys.pop();
+  const obj = keys.reduce((o, k) => o[k], cfg);
+  obj[last] = value;
+}
+
+function tilingTab() {
+  const t = cfg.tiling;
+  const [gc, gr] = gridSize();
+  let html = `<h1>Tiling</h1><p class="lede">How windows are arranged. <b>Floating</b> leaves them where you put them (Divvy); the others tile automatically (Omarchy). Press <kbd class="alias">${esc(aliasLabel("mod"))}</kbd><kbd>L</kbd> to cycle a workspace's layout.</p>`;
+  html += `<div class="card"><div class="field"><label for="f-layout">New workspaces start as<div class="help">You can still switch any workspace at any time.</div></label><div><select id="f-layout" data-path="tiling.default_layout">${S.layouts.map((l) => `<option ${l === t.default_layout ? "selected" : ""}>${esc(l)}</option>`).join("")}</select></div></div>
+    <div class="field"><label>Layout cycle<div class="help">Order used by layout next / previous.</div></label><ul class="layout-order">${t.cycle.map((l, i) => `<li><span style="min-width:90px">${esc(l)}</span>
+      <button class="btn small ghost" data-cycle-up="${i}" ${i === 0 ? "disabled" : ""} aria-label="Move up">↑</button><button class="btn small ghost" data-cycle-down="${i}" ${i === t.cycle.length - 1 ? "disabled" : ""} aria-label="Move down">↓</button>
+      <button class="btn small ghost danger" data-cycle-del="${i}" ${t.cycle.length === 1 ? "disabled" : ""}>Remove</button></li>`).join("")}
+      ${S.layouts.filter((l) => !t.cycle.includes(l)).map((l) => `<li><button class="btn small" data-cycle-add="${esc(l)}">+ ${esc(l)}</button></li>`).join("")}</ul></div>
+    ${range("tiling.gaps_inner", "Gap between windows", "", 0, 40, 1)}
+    ${range("tiling.gaps_outer", "Gap at the screen edge", "", 0, 40, 1)}
+    ${range("tiling.master_ratio", "Master width", "Share of the screen the master window takes (master layout).", 0.2, 0.8, 0.01)}
+    ${range("tiling.column_width", "Column width", "Width of each column in the scrolling layout.", 0.2, 1, 0.01)}
+    <div class="field"><label>Pop-out size<div class="help">Size of a window popped out with <kbd class="alias">${esc(aliasLabel("mod"))}</kbd><kbd>O</kbd>.</div></label><div class="row"><input type="number" data-path="tiling.pop_size.0" data-type="number" value="${t.pop_size[0]}" aria-label="Width"> × <input type="number" data-path="tiling.pop_size.1" data-type="number" value="${t.pop_size[1]}" aria-label="Height"></div></div>
+    <div class="field"><label>Resize step<div class="help">Pixels per resize key press.</div></label><div><input type="number" data-path="tiling.resize_steps.1" data-type="number" value="${t.resize_steps[1]}" aria-label="Resize step"></div></div></div>`;
+  html += `<h2>Grid overlay</h2><div class="card">
+    <div class="field"><label>Grid size<div class="help">Columns × rows. Hold ⌥ in the overlay for a finer grid.</div></label><div class="row"><input type="number" id="grid-cols" min="1" max="10" value="${gc}" aria-label="Columns"> × <input type="number" id="grid-rows" min="1" max="10" value="${gr}" aria-label="Rows"></div></div>
+    ${range("grid.screen_margin", "Margin at the screen edge", "", 0, 40, 1)}
+    ${range("grid.window_margin", "Margin between windows", "", 0, 40, 1)}
+    ${check("grid.cycle_displays", "Press a shortcut again for the next display")}
+    ${check("grid.keep_open", "Keep the overlay open after placing a window")}
+    ${check("grid.float_on_apply", "Placing a tiled window with the grid floats it", "Otherwise the grid only works on floating workspaces.")}</div>`;
+  return html;
+}
+
+function workspacesTab() {
+  const w = cfg.workspaces;
+  let html = `<h1>Workspaces</h1><p class="lede">Each display shows one workspace; windows on the others are parked out of sight.</p><div class="card">${num("workspaces.count", "Numbered workspaces", "Bound to the number keys (1–9, 0 = 10).", 'min="1" max="10"')}</div>`;
+  html += `<h2>Layout per workspace</h2><div class="card" style="padding:4px 10px"><table><thead><tr><th>Workspace</th><th>Layout</th><th></th></tr></thead><tbody>`;
+  Object.entries(w.layout).forEach(([name, layout]) => {
+    html += `<tr><td>${esc(name)}</td><td><select data-ws-layout="${esc(name)}">${S.layouts.map((l) => `<option ${l === layout ? "selected" : ""}>${esc(l)}</option>`).join("")}</select></td><td class="actions"><button class="btn small ghost danger" data-ws-layout-del="${esc(name)}">Delete</button></td></tr>`;
+  });
+  html += `<tr><td colspan="3"><button class="btn small" id="add-ws-layout">+ Add</button></td></tr></tbody></table></div>`;
+  html += `<h2>Keep a workspace on a display</h2><div class="card" style="padding:4px 10px"><table><thead><tr><th>Workspace</th><th>Display</th><th></th></tr></thead><tbody>`;
+  Object.entries(w.display).forEach(([name, idx]) => {
+    html += `<tr><td>${esc(name)}</td><td><input type="number" min="0" max="8" data-ws-display="${esc(name)}" value="${idx}" aria-label="Display index"> <span class="help cmd">0 = main display</span></td><td class="actions"><button class="btn small ghost danger" data-ws-display-del="${esc(name)}">Delete</button></td></tr>`;
+  });
+  html += `<tr><td colspan="3"><button class="btn small" id="add-ws-display">+ Add</button></td></tr></tbody></table></div>`;
+  return html;
+}
+
+function rulesTab() {
+  let html = `<h1>Window rules</h1><p class="lede">Applied when a window opens; the first matching rule wins. App is the bundle id (e.g. <span class="cmd">com.apple.systempreferences</span>), shown by <span class="cmd">gridpilot windows</span>. Title matches any part of the title.</p>
+    <div class="card" style="padding:4px 10px;overflow-x:auto"><table><thead><tr><th>App</th><th>Title contains</th><th>Float</th><th>Workspace</th><th>Grid region</th><th>Ignore</th><th></th></tr></thead><tbody>`;
+  cfg.rule.forEach((r, i) => {
+    html += `<tr><td><input type="text" data-rule="${i}" data-field="app" value="${esc(r.app ?? "")}" placeholder="any"></td>
+      <td><input type="text" data-rule="${i}" data-field="title" value="${esc(r.title ?? "")}" placeholder="any"></td>
+      <td><select data-rule="${i}" data-field="float"><option value="" ${r.float == null ? "selected" : ""}>—</option><option value="true" ${r.float === true ? "selected" : ""}>yes</option><option value="false" ${r.float === false ? "selected" : ""}>no</option></select></td>
+      <td><input type="text" data-rule="${i}" data-field="workspace" value="${esc(r.workspace ?? "")}" style="width:70px"></td>
+      <td><input type="text" data-rule="${i}" data-field="grid" value="${esc(r.grid ?? "")}" placeholder="0,0 3x4 / 6x4" style="width:130px"></td>
+      <td><input type="checkbox" data-rule="${i}" data-field="ignore" ${r.ignore ? "checked" : ""} aria-label="Ignore"></td>
+      <td class="actions"><button class="btn small ghost danger" data-rule-del="${i}">Delete</button></td></tr>`;
+  });
+  html += `<tr><td colspan="7"><button class="btn small" id="add-rule">+ Add rule</button></td></tr></tbody></table></div>`;
+  return html;
+}
+
+function appearanceTab() {
+  let html = `<h1>Appearance</h1><p class="lede">Colours for the grid overlay, notifications and the key cheat sheet. Add your own in <span class="cmd">~/.config/gridpilot/themes/&lt;name&gt;.toml</span>.</p><div class="themes">`;
+  for (const t of S.themes) {
+    html += `<button class="theme" data-theme-name="${esc(t.name)}" aria-pressed="${t.name === cfg.theme.name}">
+      <div class="preview" style="background:${t.background}"><i style="background:${t.accent};grid-row:span 2"></i><i style="background:${t.line}"></i><i style="background:${t.surface};box-shadow:inset 0 0 0 2px ${t.accent_alt}"></i></div>
+      <div class="name"><span>${esc(t.name)}</span>${t.name === cfg.theme.name ? "<span>✓</span>" : ""}</div></button>`;
+  }
+  html += `</div><div class="card" style="margin-top:16px">${check("theme.focus_border", "Border around the focused window", "Drawn in the theme's accent colour.")}</div>`;
+  return html;
+}
+
+function featuresTab() {
+  let html = `<h1>Features</h1><p class="lede">Each feature brings its own commands and keys. Turning one off removes both.</p><div class="card">`;
+  for (const f of S.features) {
+    const on = !cfg.features.disabled.includes(f.id);
+    html += `<div class="switch"><input type="checkbox" id="feat-${esc(f.id)}" data-feature="${esc(f.id)}" ${on ? "checked" : ""}><label class="grow" for="feat-${esc(f.id)}">${esc(FEATURE_LABEL[f.id] || f.id)}<div class="help">${esc(f.summary)}</div></label></div>`;
+  }
+  return html + `</div>`;
+}
+
+function generalTab() {
+  const mod = cfg.modifiers.mod;
+  const presets = [["hyper", "Hyper key (Caps Lock → ⌃⌥⌘)"], ["ctrl+alt", "⌃⌥ Control + Option"], ["ctrl+alt+cmd", "⌃⌥⌘ by hand"], ["alt", "⌥ Option"]];
+  let html = `<h1>General</h1><div class="card"><div class="field"><label for="f-mod">Main modifier<div class="help">The key every GridPilot shortcut starts with (Omarchy's SUPER).</div></label><div><select id="f-mod">${presets.map(([v, l]) => `<option value="${esc(v)}" ${v === mod ? "selected" : ""}>${esc(l)}</option>`).join("")}${presets.some(([v]) => v === mod) ? "" : `<option selected value="${esc(mod)}">${esc(mod)}</option>`}</select></div></div>
+    ${mod === "hyper" ? `<div class="field"><label>Hyper key is<div class="help">Leave Shift out so ⇧ stays the second layer.</div></label><div><input type="text" data-alias="hyper" value="${esc(cfg.modifiers.hyper ?? "")}"></div></div>` : ""}
+    <div class="field"><label>Grid shortcut modifier<div class="help">Used by the Divvy shortcuts.</div></label><div><input type="text" data-alias="grid" value="${esc(cfg.modifiers.grid ?? "")}"></div></div>
+    ${check("general.default_bindings", "Use the default key bindings", "Off: only the bindings you add yourself.")}
+    ${check("general.mouse_follows_focus", "Move the mouse pointer to windows focused by keyboard")}
+    ${num("general.poll_interval_ms", "Check for new windows every", "Milliseconds.", 'min="50" max="5000" step="50"')}</div>
+    <h2>Other modifier names</h2><div class="card" style="padding:4px 10px"><table><thead><tr><th>Name</th><th>Means</th><th></th></tr></thead><tbody>`;
+  for (const [name, exp] of Object.entries(cfg.modifiers)) {
+    if (["mod", "hyper", "grid"].includes(name)) continue;
+    html += `<tr><td class="cmd">${esc(name)}</td><td><input type="text" data-alias="${esc(name)}" value="${esc(exp)}"></td><td class="actions"><button class="btn small ghost danger" data-alias-del="${esc(name)}">Delete</button></td></tr>`;
+  }
+  html += `<tr><td colspan="3"><button class="btn small" id="add-alias">+ Add name</button></td></tr></tbody></table></div>
+    <p class="lede">Settings file: <span class="cmd">${esc(S.path)}</span></p>`;
+  return html;
+}
+
+// ---------- events ----------
+function changed() { render(); revalidate(); }
+let validateTimer = null;
+function revalidate() {
+  clearTimeout(validateTimer);
+  validateTimer = setTimeout(async () => {
+    try { validation = await api("/api/validate", { config: cfg }); } catch (e) { validation = { warnings: [String(e.message)], keymap: validation.keymap }; }
+    updateFooter();
+  }, 200);
+}
+
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button, [data-c]");
+  if (!t) return;
+  const d = t.dataset;
+  if (d.tab) { tab = d.tab; render(); window.scrollTo(0, 0); $("#main").focus({ preventScroll: true }); return; }
+  if (d.record !== undefined) {
+    const row = S.defaults[Number(d.record)];
+    return record(t, (chord) => { if (confirmChord(chord, row.command)) { setRowChord(row, chord); changed(); } });
+  }
+  if (d.reset !== undefined) { setRowChord(S.defaults[Number(d.reset)], null); return changed(); }
+  if (d.disable !== undefined) { disableRow(S.defaults[Number(d.disable)]); return changed(); }
+  if (d.customKey !== undefined) {
+    return record(t, (chord) => {
+      const cmd = cfg.bindings[d.customKey];
+      if (!confirmChord(chord, cmd)) return;
+      delete cfg.bindings[d.customKey];
+      cfg.bindings[chord] = cmd;
+      changed();
+    });
+  }
+  if (d.customDel !== undefined) { delete cfg.bindings[d.customDel]; return changed(); }
+  if (t.id === "add-binding") {
+    return record(t, (chord) => {
+      if (!confirmChord(chord, "")) return;
+      const cmd = (prompt("Command to run, e.g. exec open -a Mail, workspace 3, move-to-workspace 2 --silent") || "").trim();
+      if (cmd) { cfg.bindings[chord] = cmd; changed(); }
+    });
+  }
+  if (d.scKeys !== undefined) {
+    const s = cfg.grid.shortcut[Number(d.scKeys)];
+    return record(t, (chord) => { if (confirmChord(chord, `grid shortcut "${s.name}"`)) { s.keys = chord; changed(); } });
+  }
+  if (d.scClear !== undefined) { cfg.grid.shortcut[Number(d.scClear)].keys = null; return changed(); }
+  if (d.scDel !== undefined) { cfg.grid.shortcut.splice(Number(d.scDel), 1); return changed(); }
+  if (t.id === "add-shortcut") {
+    const [gc, gr] = gridSize();
+    cfg.grid.shortcut.push({ name: `Shortcut ${cfg.grid.shortcut.length + 1}`, keys: null, cells: `0,0 ${gc}x${gr} / ${gc}x${gr}`, global: true });
+    return changed();
+  }
+  if (d.cycleUp !== undefined || d.cycleDown !== undefined) {
+    const i = Number(d.cycleUp ?? d.cycleDown), j = d.cycleUp !== undefined ? i - 1 : i + 1;
+    const c = cfg.tiling.cycle; [c[i], c[j]] = [c[j], c[i]]; return changed();
+  }
+  if (d.cycleDel !== undefined) { cfg.tiling.cycle.splice(Number(d.cycleDel), 1); return changed(); }
+  if (d.cycleAdd !== undefined) { cfg.tiling.cycle.push(d.cycleAdd); return changed(); }
+  if (t.id === "add-ws-layout") {
+    const name = prompt("Workspace (e.g. 3):"); if (!name) return;
+    cfg.workspaces.layout[name.trim()] = "dwindle"; return changed();
+  }
+  if (d.wsLayoutDel !== undefined) { delete cfg.workspaces.layout[d.wsLayoutDel]; return changed(); }
+  if (t.id === "add-ws-display") {
+    const name = prompt("Workspace (e.g. 9):"); if (!name) return;
+    cfg.workspaces.display[name.trim()] = 1; return changed();
+  }
+  if (d.wsDisplayDel !== undefined) { delete cfg.workspaces.display[d.wsDisplayDel]; return changed(); }
+  if (t.id === "add-rule") { cfg.rule.push({ app: null, title: null, float: true, workspace: null, grid: null, ignore: false }); return changed(); }
+  if (d.ruleDel !== undefined) { cfg.rule.splice(Number(d.ruleDel), 1); return changed(); }
+  if (d.themeName) { cfg.theme.name = d.themeName; return changed(); }
+  if (t.id === "add-alias") {
+    const name = (prompt("Name (letters only, e.g. meh):") || "").trim().toLowerCase();
+    if (!/^[a-z][a-z0-9_-]*$/.test(name) || modName(name)) return;
+    cfg.modifiers[name] = "ctrl+alt+shift"; return changed();
+  }
+  if (d.aliasDel !== undefined) { delete cfg.modifiers[d.aliasDel]; return changed(); }
+});
+
+document.addEventListener("input", (e) => {
+  const t = e.target;
+  if (t.id === "filter") { filter = t.value; const pos = t.selectionStart; render(); const f = $("#filter"); f.focus(); f.setSelectionRange(pos, pos); return; }
+  if (t.dataset.path && t.type === "range") { t.nextElementSibling.textContent = t.value; }
+});
+
+document.addEventListener("change", (e) => {
+  const t = e.target, d = t.dataset;
+  if (d.path) {
+    let v = t.value;
+    if (d.type === "number") { v = Number(v); if (!Number.isFinite(v)) return; }
+    if (d.type === "bool") v = t.checked;
+    set(d.path, v);
+    return changed();
+  }
+  if (t.id === "grid-cols" || t.id === "grid-rows") {
+    const c = Math.max(1, Math.min(10, Number($("#grid-cols").value) || 1));
+    const r = Math.max(1, Math.min(10, Number($("#grid-rows").value) || 1));
+    cfg.grid.size = `${c}x${r}`; return changed();
+  }
+  if (d.customCmd !== undefined) { cfg.bindings[d.customCmd] = t.value.trim() || "none"; return changed(); }
+  if (d.scName !== undefined) { cfg.grid.shortcut[Number(d.scName)].name = t.value.trim() || "Untitled"; return changed(); }
+  if (d.scGlobal !== undefined) { cfg.grid.shortcut[Number(d.scGlobal)].global = t.checked; return changed(); }
+  if (d.wsLayout !== undefined) { cfg.workspaces.layout[d.wsLayout] = t.value; return changed(); }
+  if (d.wsDisplay !== undefined) { cfg.workspaces.display[d.wsDisplay] = Math.max(0, Number(t.value) || 0); return changed(); }
+  if (d.rule !== undefined) {
+    const r = cfg.rule[Number(d.rule)];
+    if (d.field === "ignore") r.ignore = t.checked;
+    else if (d.field === "float") r.float = t.value === "" ? null : t.value === "true";
+    else r[d.field] = t.value.trim() || null;
+    return changed();
+  }
+  if (d.feature) {
+    const off = new Set(cfg.features.disabled);
+    t.checked ? off.delete(d.feature) : off.add(d.feature);
+    cfg.features.disabled = [...off]; return changed();
+  }
+  if (t.id === "f-mod") {
+    cfg.modifiers.mod = t.value;
+    if (t.value === "hyper" && !cfg.modifiers.hyper) cfg.modifiers.hyper = "ctrl+alt+cmd";
+    return changed();
+  }
+  if (d.alias) { cfg.modifiers[d.alias] = t.value.trim(); return changed(); }
+});
+
+// Drag on a mini grid to pick a shortcut's region.
+let drag = null;
+document.addEventListener("pointerdown", (e) => {
+  const cell = e.target.closest(".mini [data-c]");
+  if (!cell) return;
+  const mini = cell.parentElement;
+  drag = { mini, i: Number(mini.dataset.mini), a: [Number(cell.dataset.c), Number(cell.dataset.r)] };
+  drag.b = drag.a;
+  paint();
+  e.preventDefault();
+});
+document.addEventListener("pointermove", (e) => {
+  if (!drag) return;
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const cell = el && el.closest && el.closest("[data-c]");
+  if (cell && cell.parentElement === drag.mini) { drag.b = [Number(cell.dataset.c), Number(cell.dataset.r)]; paint(); }
+});
+document.addEventListener("pointerup", () => {
+  if (!drag) return;
+  const { mini, i, a, b } = drag;
+  drag = null;
+  const c0 = Math.min(a[0], b[0]), c1 = Math.max(a[0], b[0]), r0 = Math.min(a[1], b[1]), r1 = Math.max(a[1], b[1]);
+  cfg.grid.shortcut[i].cells = `${c0},${r0} ${c1 - c0 + 1}x${r1 - r0 + 1} / ${mini.dataset.gc}x${mini.dataset.gr}`;
+  changed();
+});
+function paint() {
+  const c0 = Math.min(drag.a[0], drag.b[0]), c1 = Math.max(drag.a[0], drag.b[0]);
+  const r0 = Math.min(drag.a[1], drag.b[1]), r1 = Math.max(drag.a[1], drag.b[1]);
+  drag.mini.querySelectorAll("[data-c]").forEach((d) => {
+    const c = Number(d.dataset.c), r = Number(d.dataset.r);
+    d.classList.toggle("on", c >= c0 && c <= c1 && r >= r0 && r <= r1);
+  });
+}
+
+// ---------- footer ----------
+function dirty() { return JSON.stringify(cfg) !== savedJson; }
+function updateFooter() {
+  const isDirty = dirty();
+  const st = $("#status");
+  st.textContent = isDirty ? "Unsaved changes" : S.exists ? "All changes saved" : "Using defaults (no settings file yet)";
+  st.classList.toggle("dirty", isDirty);
+  $("#save").disabled = !isDirty && S.exists;
+  $("#revert").disabled = !isDirty;
+  const w = $("#warnings");
+  w.classList.toggle("hidden", !validation.warnings.length);
+  $("summary", w).textContent = `${validation.warnings.length} warning${validation.warnings.length === 1 ? "" : "s"}`;
+  $("ul", w).innerHTML = validation.warnings.map((x) => `<li>${esc(x)}</li>`).join("");
+}
+let toastTimer = null;
+function toast(msg, isErr) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.toggle("err", !!isErr);
+  t.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.add("hidden"), 5000);
+}
+$("#save").addEventListener("click", async () => {
+  try {
+    const r = await api("/api/save", { config: cfg });
+    savedJson = JSON.stringify(cfg);
+    S.exists = true;
+    S.error = null;
+    validation.warnings = r.warnings;
+    toast(r.reloaded ? "Saved. GridPilot reloaded your settings." : r.reload_error ? `Saved, but reloading failed: ${r.reload_error}` : "Saved. GridPilot isn't running; the settings apply when it starts.", !!r.reload_error);
+    render();
+  } catch (e) { toast(`Couldn't save: ${e.message}`, true); }
+});
+$("#revert").addEventListener("click", () => { cfg = JSON.parse(savedJson); changed(); });
+$("#done").addEventListener("click", async () => {
+  if (dirty() && !confirm("Discard unsaved changes?")) return;
+  await api("/api/quit", {}).catch(() => {});
+  document.body.innerHTML = `<div class="done"><div><h1>All set</h1><p>You can close this tab. Run <span class="cmd">gridpilot settings</span> to come back.</p></div></div>`;
+});
+window.addEventListener("beforeunload", (e) => { if (dirty()) { e.preventDefault(); e.returnValue = ""; } });
+
+(async function init() {
+  try {
+    S = await api("/api/state");
+    cfg = clone(S.config);
+    savedJson = JSON.stringify(cfg);
+    validation = S.validation;
+    $("#meta").innerHTML = `<span class="dot" style="background:${S.running ? "var(--ok)" : "var(--muted)"}"></span>${S.running ? "GridPilot is running" : "GridPilot isn't running"}<br>v${esc(S.version)}`;
+    render();
+  } catch (e) {
+    $("#main").innerHTML = `<div class="banner err">Couldn't load settings: ${esc(e.message)}</div>`;
+  }
+})();
+</script>
+</body>
+</html>

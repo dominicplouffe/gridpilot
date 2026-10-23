@@ -97,6 +97,20 @@ impl Feature for SystemFeature {
         r.command("warnings", "warnings", "Show recent warnings (bad bindings, platform errors)", |e, _| {
             Ok(Some(e.warnings.join("\n")))
         });
+        r.command("hotkeys", "hotkeys on|off", "Enable or pause GridPilot's global hotkeys", |e, a| {
+            let on = match a.require(0, "on or off")? {
+                "on" => true,
+                "off" => false,
+                other => return Err(format!("hotkeys: expected on/off, got `{other}`")),
+            };
+            e.set_hotkeys_enabled(on)?;
+            Ok(None)
+        });
+        r.command("settings", "settings", "Open the settings page in the browser", |e, _| {
+            let exe = std::env::current_exe().map_err(|err| format!("can't find the gridpilot binary: {err}"))?;
+            e.platform().spawn(&format!("'{}' settings", exe.display().to_string().replace('\'', "'\\''")))?;
+            Ok(None)
+        });
         r.command("quit", "quit", "Stop GridPilot", |e, _| {
             e.quit_requested = true;
             Ok(None)
@@ -133,7 +147,8 @@ pub fn load_theme(name: &str) -> Result<Theme, String> {
     toml::from_str(&text).map_err(|e| format!("theme `{name}`: {e}"))
 }
 
-fn theme_names() -> Vec<String> {
+/// Built-in themes followed by the user's own.
+pub fn theme_names() -> Vec<String> {
     let mut names: Vec<String> = Theme::builtins().into_iter().map(|t| t.name).collect();
     if let Ok(dir) = std::fs::read_dir(config_dir().join("themes")) {
         for entry in dir.flatten() {

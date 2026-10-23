@@ -18,6 +18,7 @@ const ITEMS: &[(&str, &str)] = &[
     ("Layout: Scrolling", "layout scrolling"),
     ("Layout: Master", "layout master"),
     ("", ""),
+    ("Settings…", "settings"),
     ("Next Theme", "theme next"),
     ("Reload Config", "reload"),
     ("Open Config", "exec open -t \"${GRIDPILOT_CONFIG:-$HOME/.config/gridpilot/gridpilot.toml}\""),

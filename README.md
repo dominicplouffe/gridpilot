@@ -69,7 +69,12 @@ Full list: [docs/KEYS.md](docs/KEYS.md).
 
 ## Configuration
 
-Everything lives in `~/.config/gridpilot/gridpilot.toml`; see the
+Run `gridpilot settings`, or pick **Settings…** from the menu bar icon. That opens a settings page
+in your browser where you can record shortcuts, draw grid regions, and pick layouts, gaps, themes,
+window rules and features. Saving writes the config file (keeping the old one as `.bak`) and
+GridPilot reloads it straight away.
+
+Everything lives in `~/.config/gridpilot/gridpilot.toml`, which you can also edit by hand; see the
 annotated [reference config](config/gridpilot.toml). Highlights:
 
 ```toml

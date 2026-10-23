@@ -31,7 +31,7 @@ pub enum EngineEvent {
 
 pub type Hook = Rc<dyn Fn(&mut Engine, &EngineEvent)>;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub struct DefaultBinding {
     pub chord: String,
     pub command: String,
