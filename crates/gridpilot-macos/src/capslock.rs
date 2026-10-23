@@ -61,7 +61,17 @@ pub fn configure(mods: Option<Modifiers>) -> Result<(), String> {
                 remove_tap();
                 return Err(e);
             }
-            Ok(())
+            match is_remapped() {
+                Ok(true) => {
+                    eprintln!("gridpilot: Caps Lock is now your mod key (hold it and press a key; quit GridPilot to get it back)");
+                    Ok(())
+                }
+                Ok(false) => {
+                    remove_tap();
+                    Err("hidutil accepted the Caps Lock remap but it isn't active".into())
+                }
+                Err(e) => Err(e),
+            }
         }
     }
 }
@@ -111,6 +121,11 @@ pub fn restore() {
 /// While hotkeys are paused, let Caps+key through as mod+key.
 pub fn set_passthrough(on: bool) {
     PASSTHROUGH.set(on);
+}
+
+/// Is Caps Lock currently remapped to F18?
+pub fn is_remapped() -> Result<bool, String> {
+    Ok(current_mapping()?.contains(&(hidmap::CAPS_LOCK, hidmap::F18)))
 }
 
 /// `gridpilot capslock off`: undo the remap even if GridPilot isn't running.

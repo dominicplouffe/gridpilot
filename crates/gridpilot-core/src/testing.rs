@@ -23,6 +23,8 @@ pub struct MockState {
     pub set_frame_calls: usize,
     /// Windows whose `set_frame` fails, like a fixed-size macOS window.
     pub unmovable: Vec<WindowId>,
+    /// Chords `register_hotkeys` reports as taken by another app.
+    pub taken_hotkeys: Vec<Chord>,
     /// What Caps Lock was last set to press.
     pub capslock: Option<Modifiers>,
 }
@@ -134,8 +136,14 @@ impl Platform for MockPlatform {
     }
 
     fn register_hotkeys(&mut self, chords: &[Chord]) -> PlatformResult<()> {
-        self.0.borrow_mut().hotkeys = chords.to_vec();
-        Ok(())
+        let mut s = self.0.borrow_mut();
+        s.hotkeys = chords.iter().filter(|c| !s.taken_hotkeys.contains(c)).copied().collect();
+        let taken: Vec<String> = chords.iter().filter(|c| s.taken_hotkeys.contains(c)).map(|c| c.to_string()).collect();
+        if taken.is_empty() {
+            Ok(())
+        } else {
+            Err(format!("could not register (taken by another app?): {}", taken.join(", ")))
+        }
     }
 
     fn set_capslock_modifiers(&mut self, mods: Option<Modifiers>) -> PlatformResult<()> {

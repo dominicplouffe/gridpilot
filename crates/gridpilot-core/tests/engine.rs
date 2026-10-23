@@ -302,3 +302,17 @@ fn capslock_presses_the_mod_modifiers() {
     e.apply_config(c).unwrap();
     assert_eq!(p.state().capslock, None);
 }
+
+#[test]
+fn a_taken_hotkey_does_not_stop_startup_or_capslock() {
+    let p = MockPlatform::with_displays(1);
+    let taken = Chord::parse("ctrl+alt+cmd+k", &Default::default()).unwrap();
+    p.0.borrow_mut().taken_hotkeys.push(taken);
+    p.open(1, "app", Rect::new(100.0, 100.0, 800.0, 600.0));
+    let mut e = Engine::new(Box::new(p.clone()), Config::default(), builtin());
+    e.start().unwrap();
+    assert!(p.state().capslock.is_some(), "Caps Lock still set up");
+    assert_eq!(e.world.windows.len(), 1, "windows still picked up");
+    assert!(e.warnings.iter().any(|w| w.contains("ctrl+alt+cmd+k")), "{:#?}", e.warnings);
+    assert!(p.state().hotkeys.len() > 50, "the other hotkeys are registered");
+}

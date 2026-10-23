@@ -153,8 +153,7 @@ impl Engine {
     /// Read displays and windows from the platform and register hotkeys.
     pub fn start(&mut self) -> Result<(), String> {
         self.sync_displays()?;
-        let chords: Vec<Chord> = self.keymap.keys().copied().collect();
-        self.platform.register_hotkeys(&chords)?;
+        self.register_hotkeys();
         self.apply_capslock();
         self.refresh()?;
         let theme = self.theme.clone();
@@ -191,6 +190,15 @@ impl Engine {
             return None;
         }
         Chord::parse("mod+a", &self.config.modifiers).ok().map(|c| c.mods).filter(|m| !m.is_empty())
+    }
+
+    /// Register the keymap. A shortcut another app already owns is reported
+    /// but doesn't stop the rest (or Caps Lock) from working.
+    fn register_hotkeys(&mut self) {
+        let chords: Vec<Chord> = self.keymap.keys().copied().collect();
+        if let Err(e) = self.platform.register_hotkeys(&chords) {
+            self.warn(e);
+        }
     }
 
     fn apply_capslock(&mut self) {
@@ -763,8 +771,7 @@ impl Engine {
         self.config = config;
         self.theme = crate::features::system::load_theme(&self.config.theme.name).unwrap_or_default();
         self.install_features();
-        let chords: Vec<Chord> = self.keymap.keys().copied().collect();
-        self.platform.register_hotkeys(&chords)?;
+        self.register_hotkeys();
         self.apply_capslock();
         let theme = self.theme.clone();
         self.platform.present(UiRequest::ThemeChanged(theme));

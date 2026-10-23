@@ -21,7 +21,7 @@ USAGE:
     gridpilot simulate                try the engine on a fake desktop (any OS)
     gridpilot keymap [--markdown]     print the key bindings a config produces
     gridpilot settings [--no-open]    edit settings in the browser
-    gridpilot capslock off            give Caps Lock back if GridPilot didn't (macOS)
+    gridpilot capslock status|off     is Caps Lock acting as mod? / give it back (macOS)
     gridpilot <command> [args...]     send a command to the running instance
 
 COMMANDS (see `gridpilot commands` for all):
@@ -64,7 +64,11 @@ fn main() -> ExitCode {
         Some("simulate") => load(&config_path(&args)).and_then(simulate::run),
         Some("keymap") => keymap(&args),
         Some("settings") => settings::run(&args),
-        Some("capslock") if args.get(1).map(String::as_str) == Some("off") => capslock_off(),
+        Some("capslock") => match args.get(1).map(String::as_str) {
+            Some("off") => capslock_off(),
+            Some("status") | None => capslock_status(),
+            Some(other) => Err(format!("unknown `capslock {other}` (expected status or off)")),
+        },
         Some(_) => ipc::send(&quote(&args)).map(|out| {
             if !out.is_empty() {
                 println!("{out}");
@@ -153,6 +157,28 @@ fn capslock_off() -> Result<(), String> {
 
 #[cfg(not(target_os = "macos"))]
 fn capslock_off() -> Result<(), String> {
+    Err("Caps Lock remapping only exists on macOS".into())
+}
+
+#[cfg(target_os = "macos")]
+fn capslock_status() -> Result<(), String> {
+    let config = load(&Config::default_path())?;
+    println!("capslock_mod in config: {}", config.general.capslock_mod);
+    let remapped = gridpilot_macos::capslock::is_remapped()?;
+    println!(
+        "Caps Lock remapped right now: {}",
+        if remapped { "yes (holding it sends GridPilot's mod)" } else { "no (it types capitals)" }
+    );
+    match ipc::send("warnings") {
+        Ok(w) if w.trim().is_empty() => println!("GridPilot is running, no warnings."),
+        Ok(w) => println!("GridPilot is running. Warnings:\n{w}"),
+        Err(_) => println!("GridPilot is not running (Caps Lock is only remapped while it runs)."),
+    }
+    Ok(())
+}
+
+#[cfg(not(target_os = "macos"))]
+fn capslock_status() -> Result<(), String> {
     Err("Caps Lock remapping only exists on macOS".into())
 }
 
