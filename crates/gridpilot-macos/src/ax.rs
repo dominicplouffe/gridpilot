@@ -109,12 +109,21 @@ impl AxElement {
         self.set_value("AXSize", &v)
     }
 
+    pub fn is_settable(&self, name: &str) -> bool {
+        let attr = cfstr(name);
+        let mut settable: Boolean = 0;
+        let err = unsafe { AXUIElementIsAttributeSettable(self.raw(), attr.as_ptr(), &mut settable) };
+        err == kAXErrorSuccess && settable != 0
+    }
+
     /// Position, size, then position again: moving first lets the window grow
     /// into a new display, and the second move fixes up apps that clamp.
+    /// Fixed-size windows are still moved; only their size is left alone.
     pub fn set_frame(&self, r: Rect) -> Result<(), String> {
         self.set_position(r.x, r.y)?;
-        self.set_size(r.w, r.h)?;
-        self.set_position(r.x, r.y)
+        let sized = if self.is_settable("AXSize") { self.set_size(r.w, r.h) } else { Ok(()) };
+        self.set_position(r.x, r.y)?;
+        sized
     }
 
     pub fn set_bool(&self, name: &str, value: bool) -> Result<(), String> {

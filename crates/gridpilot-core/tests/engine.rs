@@ -253,3 +253,26 @@ fn app_enforced_size_does_not_cause_a_fight_but_a_drag_snaps_back() {
     e.refresh().unwrap();
     assert_eq!(p.state().frame(a), planned);
 }
+
+#[test]
+fn new_windows_on_a_floating_workspace_are_left_alone() {
+    let (mut e, p) = engine_with(1, Config::default());
+    open(&mut e, &p, 1);
+    open(&mut e, &p, 2);
+    e.refresh().unwrap();
+    assert_eq!(p.state().set_frame_calls, 0);
+}
+
+#[test]
+fn a_window_that_cannot_be_moved_is_reported_once_not_every_poll() {
+    let (mut e, p) = engine_with(1, tiling());
+    let a = WindowId(1);
+    p.0.borrow_mut().unmovable.push(a);
+    open(&mut e, &p, 1);
+    for _ in 0..10 {
+        e.refresh().unwrap();
+    }
+    let failures = e.warnings.iter().filter(|w| w.contains("window 1:")).count();
+    assert_eq!(failures, 1, "{:#?}", e.warnings);
+    assert_eq!(p.state().set_frame_calls, 1, "not retried while the plan is unchanged");
+}
